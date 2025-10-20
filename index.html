@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müasir Hesabat Sistemi</title>
+    <style>
+        /* --- Əsas Stilizasiya --- */
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --card-bg: #2e3b55;
+            --text-color: #e0e0e0;
+            --primary-color: #0f3460;
+            --accent-color: #e94560;
+            --success-color: #5cb85c;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- Animasiyalar --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Ümumi Komponentlər --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+        }
+
+        .card h2 {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input[type="number"],
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input[type="number"]:focus,
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+        }
+        
+        .horizontal-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .horizontal-inputs .form-group {
+            flex: 1;
+        }
+
+        .total-display {
+            text-align: right;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .total-display span {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-left: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Qeydlər Bölməsi --- */
+        #notes-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        #notes-list li {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.3s;
+        }
+        
+        #notes-list li.completed {
+            background: #3a5a40; /* Yaşıl çalar */
+            text-decoration: line-through;
+        }
+
+        #notes-list li .note-text {
+            flex-grow: 1;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        
+        #notes-list li .note-text.editing {
+            cursor: text;
+        }
+
+        #notes-list li .note-actions button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 8px;
+            padding: 5px;
+            width: auto;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        #notes-list li .note-actions .btn-complete:hover { color: var(--success-color); transform: scale(1.2); }
+        #notes-list li .note-actions .btn-edit:hover { color: #f0ad4e; transform: scale(1.2); }
+        #notes-list li .note-actions .btn-delete:hover { color: var(--accent-color); transform: scale(1.2); }
+
+        /* --- Xəbərdarlıq və Yükləyici --- */
+        #notification-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        #notification-bar.error {
+            background: var(--accent-color);
+        }
+
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none; /* Başlanğıcda gizli */
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-color);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        #week-clear-section {
+            margin-top: 20px;
+            display: none; /* JS ilə göstəriləcək */
+            text-align: center;
+        }
+        
+        #week-clear-section p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+    
+    <div id="notification-bar"></div>
+
+    <div class="container">
+        <header>
+            <h1>Müasir Hesabat Sistemi</h1>
+        </header>
+
+        <div class="main-grid">
+            
+            <section class="card">
+                <h2>Günlük Hesabat</h2>
+                <form id="finance-form">
+                    <h3>Kart Məbləğləri</h3>
+                    <div class="horizontal-inputs">
+                        <div class="form-group">
+                            <label for="arzu">Arzu</label>
+                            <input type="number" id="arzu" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="aide">Aidə</label>
+                            <input type="number" id="aide" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="gulshad">Gülşad</label>
+                            <input type="number" id="gulshad" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="total-display">Cəmi: <span id="kart-total">0.00 AZN</span></div>
+                    
+                    <hr style="border-color: var(--primary-color); margin: 20px 0;">
+
+                    <h3>Smart Qalıq</h3>
+                    <div class="horizontal-inputs">
+                        <div class="form-group">
+                            <label for="nagd1">Nağd 1</label>
+                            <input type="number" id="nagd1" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="nagd2">Nağd 2</label>
+                            <input type="number" id="nagd2" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="horizontal-inputs">
+                        <div class="form-group">
+                            <label for="kart1">Kart 1</label>
+                            <input type="number" id="kart1" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="kart2">Kart 2</label>
+                            <input type="number" id="kart2" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="total-display">Cəmi: <span id="smart-total">0.00 AZN</span></div>
+                    
+                    <button type="submit" id="save-finance-btn">Yadda Saxla</button>
+                </form>
+
+                <div id="week-clear-section">
+                    <p id="week-clear-message"></p>
+                    <button id="clear-data-btn" style="background: var(--accent-color);">Bazanı Təmizlə</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Qeydlər (To-Do)</h2>
+                <form id="notes-form">
+                    <div class="form-group">
+                        <label for="note-input">Yeni qeyd</label>
+                        <input type="text" id="note-input" placeholder="Qeydinizi bura yazın...">
+                    </div>
+                    <button type="submit">Əlavə Et</button>
+                </form>
+                <ul id="notes-list">
+                    </ul>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // !!! ÇOX VACİB !!!
+        // Addım 3-də kopyaladığınız Web App URL-ni bu dırnaqların arasına yapışdırın
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww4d2Fcakg2Yt1-1UM5B-KdiIT31MBuaAydi3d6MTrxTKodrTPuMpRYezHVDGyVpsZ/exec';
+        
+        // Elementləri seçmək
+        const loader = document.getElementById('loader');
+        const notification = document.getElementById('notification-bar');
+        
+        // Maliyyə elementləri
+        const financeForm = document.getElementById('finance-form');
+        const kartTotalEl = document.getElementById('kart-total');
+        const smartTotalEl = document.getElementById('smart-total');
+        const inputs = {
+            arzu: document.getElementById('arzu'),
+            aide: document.getElementById('aide'),
+            gulshad: document.getElementById('gulshad'),
+            nagd1: document.getElementById('nagd1'),
+            nagd2: document.getElementById('nagd2'),
+            kart1: document.getElementById('kart1'),
+            kart2: document.getElementById('kart2')
+        };
+        const weekClearSection = document.getElementById('week-clear-section');
+        const weekClearMessage = document.getElementById('week-clear-message');
+        const clearDataBtn = document.getElementById('clear-data-btn');
+
+        // Qeyd elementləri
+        const notesForm = document.getElementById('notes-form');
+        const noteInput = document.getElementById('note-input');
+        const notesList = document.getElementById('notes-list');
+
+        // --- Helper Funksiyalar ---
+
+        function showLoader() { loader.style.display = 'flex'; }
+        function hideLoader() { loader.style.display = 'none'; }
+
+        function showNotification(message, isError = false) {
+            notification.textContent = message;
+            notification.className = isError ? 'error' : 'success';
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Məlumatları Google Apps Script-ə göndərən əsas funksiya
+        async function postToGoogleScript(action, payload) {
+            showLoader();
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, payload }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                hideLoader();
+
+                if (result.status === 'success') {
+                    return result.data;
+                } else {
+                    throw new Error(result.message || 'Bilinməyən xəta baş verdi');
+                }
+            } catch (error) {
+                hideLoader();
+                console.error('Google Script Xətası:', error);
+                showNotification(error.message, true);
+                return null;
+            }
+        }
+
+        // --- Səhifə Yüklənəndə ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInitialData();
+            checkWeekStatus();
+        });
+
+        async function loadInitialData() {
+            // Bugünkü maliyyə məlumatlarını yüklə
+            const todayData = await postToGoogleScript('getTodayData');
+            if (todayData) {
+                inputs.arzu.value = todayData.arzu || '';
+                inputs.aide.value = todayData.aide || '';
+                inputs.gulshad.value = todayData.gulshad || '';
+                inputs.nagd1.value = todayData.nagd1 || '';
+                inputs.nagd2.value = todayData.nagd2 || '';
+                inputs.kart1.value = todayData.kart1 || '';
+                inputs.kart2.value = todayData.kart2 || '';
+                updateTotals();
+            }
+            
+            // Qeydləri yüklə
+            const notes = await postToGoogleScript('getNotes');
+            if (notes) {
+                notesList.innerHTML = ''; // Siyahını təmizlə
+                notes.forEach(note => renderNote(note));
+            }
+        }
+        
+        async function checkWeekStatus() {
+            const status = await postToGoogleScript('checkWeekStatus');
+            if (status) {
+                weekClearSection.style.display = 'block';
+                weekClearMessage.textContent = status.message;
+                if (status.clearable) {
+                    clearDataBtn.disabled = false;
+                } else {
+                    clearDataBtn.disabled = true;
+                }
+            }
+        }
+        
+        // --- Maliyyə Funksiyaları ---
+
+        function updateTotals() {
+            const arzu = parseFloat(inputs.arzu.value) || 0;
+            const aide = parseFloat(inputs.aide.value) || 0;
+            const gulshad = parseFloat(inputs.gulshad.value) || 0;
+            kartTotalEl.textContent = (arzu + aide + gulshad).toFixed(2) + ' AZN';
+            
+            const nagd1 = parseFloat(inputs.nagd1.value) || 0;
+            const nagd2 = parseFloat(inputs.nagd2.value) || 0;
+            const kart1 = parseFloat(inputs.kart1.value) || 0;
+            const kart2 = parseFloat(inputs.kart2.value) || 0;
+            smartTotalEl.textContent = (nagd1 + nagd2 + kart1 + kart2).toFixed(2) + ' AZN';
+        }
+
+        // Hesablamaları real vaxtda göstər
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateTotals);
+        });
+
+        // Maliyyə məlumatlarını yadda saxla
+        financeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                arzu: parseFloat(inputs.arzu.value) || 0,
+                aide: parseFloat(inputs.aide.value) || 0,
+                gulshad: parseFloat(inputs.gulshad.value) || 0,
+                nagd1: parseFloat(inputs.nagd1.value) || 0,
+                nagd2: parseFloat(inputs.nagd2.value) || 0,
+                kart1: parseFloat(inputs.kart1.value) || 0,
+                kart2: parseFloat(inputs.kart2.value) || 0,
+            };
+            
+            const result = await postToGoogleScript('saveFinances', payload);
+            if (result) {
+                showNotification(result, false);
+            }
+        });
+
+        // Həftəlik bazanı təmizlə
+        clearDataBtn.addEventListener('click', async () => {
+            if (confirm("Həqiqətən bütün maliyyə məlumatlarını silmək istəyirsiniz? Bu əməliyyat geri qaytarıla bilməz.")) {
+                const result = await postToGoogleScript('clearFinanceData');
+                if (result) {
+                    showNotification(result, false);
+                    // Formu təmizlə
+                    Object.values(inputs).forEach(input => input.value = '');
+                    updateTotals();
+                    checkWeekStatus(); // Statusu yenilə
+                }
+            }
+        });
+
+        // --- Qeyd Funksiyaları ---
+
+        function renderNote(note) {
+            const li = document.createElement('li');
+            li.dataset.id = note.id;
+            li.className = note.status === 'completed' ? 'completed' : '';
+            
+            li.innerHTML = `
+                <span class="note-text">${note.text}</span>
+                <div class="note-actions">
+                    <button class="btn-complete" title="Tamamla">✔</button>
+                    <button class="btn-edit" title="Düzəliş et">✎</button>
+                    <button class="btn-delete" title="Sil">✖</button>
+                </div>
+            `;
+            notesList.appendChild(li);
+        }
+        
+        // Yeni qeyd əlavə et
+        notesForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = noteInput.value.trim();
+            if (text === '') return;
+            
+            const newNote = await postToGoogleScript('addNote', text);
+            if (newNote) {
+                renderNote(newNote);
+                noteInput.value = '';
+                showNotification("Qeyd əlavə edildi.", false);
+            }
+        });
+        
+        // Qeydlər siyahısındakı düymələrə klik
+        notesList.addEventListener('click', async (e) => {
+            const li = e.target.closest('li');
+            if (!li) return;
+            
+            const id = li.dataset.id;
+            const noteTextSpan = li.querySelector('.note-text');
+
+            // Silmək
+            if (e.target.classList.contains('btn-delete')) {
+                if (confirm("Bu qeydi silmək istədiyinizə əminsiniz?")) {
+                    const result = await postToGoogleScript('deleteNote', id);
+                    if (result) {
+                        li.remove();
+                        showNotification(result, false);
+                    }
+                }
+            }
+            
+            // Tamamlamaq / Geri qaytarmaq
+            if (e.target.classList.contains('btn-complete')) {
+                const newStatus = li.classList.toggle('completed') ? 'completed' : 'pending';
+                await postToGoogleScript('updateNote', { id: id, status: newStatus });
+            }
+            
+            // Düzəliş etmək
+            if (e.target.classList.contains('btn-edit')) {
+                if (noteTextSpan.isContentEditable) {
+                    // Yadda saxlama rejimi
+                    noteTextSpan.contentEditable = false;
+                    noteTextSpan.classList.remove('editing');
+                    e.target.innerHTML = '✎';
+                    const newText = noteTextSpan.textContent.trim();
+                    if (newText) {
+                         await postToGoogleScript('updateNote', { id: id, text: newText });
+                         showNotification("Qeyd yeniləndi.", false);
+                    }
+                } else {
+                    // Düzəliş rejimi
+                    noteTextSpan.contentEditable = true;
+                    noteTextSpan.classList.add('editing');
+                    noteTextSpan.focus();
+                    e.target.innerHTML = '💾'; // Yadda saxla ikonu
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
