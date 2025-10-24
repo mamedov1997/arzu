@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A4 Çap Proqramı (v3 - Döndərmə ilə)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .controls {
+            width: 210mm;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .controls h2 { margin-top: 0; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="file"] { width: 100%; padding: 8px; box-sizing: border-box; }
+
+        /* Ümumi düymə stili */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button#print-button { background-color: #007bff; }
+        button#print-button:hover { background-color: #0056b3; }
+
+        button#reset-button {
+            background-color: #ffc107;
+            color: #212529;
+            display: none;
+        }
+        button#reset-button:hover { background-color: #e0a800; }
+
+        /* YENİ: Döndərmə düymələri üçün stillər */
+        .rotate-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .rotate-btn {
+            width: 50%; /* 100% əvəzinə */
+            flex-grow: 1;
+            background-color: #6c757d;
+            padding: 8px;
+            font-size: 14px;
+            margin-top: 0; /* Yuxarıdakı ümumi stili ləğv et */
+        }
+        .rotate-btn:hover { background-color: #5a6268; }
+
+
+        #a4-page {
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .image-container {
+            width: 100%; /* 180mm */
+            height: 128mm; /* Təxmini hündürlük */
+            border: 2px dashed #ccc;
+            background-color: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* Çap stilləri */
+        @media print {
+            body { background-color: white; padding: 0; margin: 0; }
+            .controls { display: none; }
+            #a4-page { box-shadow: none; margin: 0; padding: 15mm; width: 210mm; height: 297mm; }
+            .cropper-container { border: none; }
+            .cropper-view-box, .cropper-face { outline: none !important; box-shadow: none !important; }
+            .cropper-line, .cropper-point { display: none !important; }
+            .image-container { border: none; background: none; }
+        }
+        
+        .preparing-for-print .image-container {
+            border: none;
+            background: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2>A4 Çap Parametrləri</h2>
+        
+        <div class="input-group">
+            <label for="image-loader1">Şəkil 1 (Yuxarı):</label>
+            <input type="file" id="image-loader1" accept="image/*">
+            <div class="rotate-buttons">
+                <button type="button" class="rotate-btn" id="rotate-left-1" title="Sola döndər">-90°</button>
+                <button type="button" class="rotate-btn" id="rotate-right-1" title="Sağa döndər">+90°</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="image-loader2">Şəkil 2 (Aşağı):</label>
+            <input type="file" id="image-loader2" accept="image/*">
+            <div class="rotate-buttons">
+                <button type="button" class="rotate-btn" id="rotate-left-2" title="Sola döndər">-90°</button>
+                <button type="button" class="rotate-btn" id="rotate-right-2" title="Sağa döndər">+90°</button>
+            </div>
+        </div>
+        
+        <button id="print-button">ÇAP ET</button>
+        <button id="reset-button">Düzəliş Et</button>
+    </div>
+
+    <div id="a4-page">
+        <div class="image-container" id="container1">
+            <img id="image1" alt="Şəkil 1 üçün yer">
+        </div>
+        <div class="image-container" id="container2">
+            <img id="image2" alt="Şəkil 2 üçün yer">
+        </div>
+    </div>
+
+    <script>
+        let cropper1 = null;
+        let cropper2 = null;
+        
+        let originalSrc1 = null;
+        let originalSrc2 = null;
+        
+        const printButton = document.getElementById('print-button');
+        const resetButton = document.getElementById('reset-button');
+        
+        const cropperOptions = {
+            viewMode: 1, 
+            autoCropArea: 0.8,
+            background: false,
+            movable: true,
+            zoomable: true,
+            rotatable: true, // Daxili döndərmə aktivdir
+            scalable: true,
+            dragMode: 'crop'
+        };
+
+        // Fayl yükləyicilər
+        document.getElementById('image-loader1').addEventListener('change', (e) => handleImageUpload(e, 'image1', 1));
+        document.getElementById('image-loader2').addEventListener('change', (e) => handleImageUpload(e, 'image2', 2));
+
+        // Əsas düymələr
+        printButton.addEventListener('click', prepareAndPrint);
+        resetButton.addEventListener('click', resetCroppers);
+
+        // YENİ: Döndərmə düymələrinin hadisələri
+        document.getElementById('rotate-left-1').addEventListener('click', () => {
+            if (cropper1) cropper1.rotate(-90);
+        });
+        document.getElementById('rotate-right-1').addEventListener('click', () => {
+            if (cropper1) cropper1.rotate(90);
+        });
+        document.getElementById('rotate-left-2').addEventListener('click', () => {
+            if (cropper2) cropper2.rotate(-90);
+        });
+        document.getElementById('rotate-right-2').addEventListener('click', () => {
+            if (cropper2) cropper2.rotate(90);
+        });
+
+
+        function handleImageUpload(e, imgId, cropperIndex) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgElement = document.getElementById(imgId);
+                const imgSrc = event.target.result;
+                imgElement.src = imgSrc;
+
+                if (cropperIndex === 1) {
+                    originalSrc1 = imgSrc;
+                    if (cropper1) cropper1.destroy();
+                    cropper1 = new Cropper(imgElement, cropperOptions);
+                } else {
+                    originalSrc2 = imgSrc;
+                    if (cropper2) cropper2.destroy();
+                    cropper2 = new Cropper(imgElement, cropperOptions);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function prepareAndPrint() {
+            document.body.classList.add('preparing-for-print');
+        
+            // A4-dəki qutunun proporsiyaları (180mm x 128mm)
+            // Yüksək keyfiyyətli çap üçün bu ölçüləri böyüdürük
+            const outputWidth = 1800; // 180mm-ə uyğun yüksək keyfiyyət
+            const outputHeight = 1280; // 128mm-ə uyğun yüksək keyfiyyət
+
+            if (cropper1) {
+                // YENİ: Kəsilmiş şəkli məcburi ölçülərə uyğunlaşdır (dart)
+                const croppedCanvas1 = cropper1.getCroppedCanvas({
+                    width: outputWidth,
+                    height: outputHeight,
+                    imageSmoothingQuality: 'high'
+                });
+                const imgElement1 = document.getElementById('image1');
+                imgElement1.src = croppedCanvas1.toDataURL('image/png');
+                cropper1.destroy(); 
+            }
+            
+            if (cropper2) {
+                // YENİ: Kəsilmiş şəkli məcburi ölçülərə uyğunlaşdır (dart)
+                const croppedCanvas2 = cropper2.getCroppedCanvas({
+                    width: outputWidth,
+                    height: outputHeight,
+                    imageSmoothingQuality: 'high'
+                });
+                const imgElement2 = document.getElementById('image2');
+                imgElement2.src = croppedCanvas2.toDataURL('image/png');
+                cropper2.destroy();
+            }
+            
+            printButton.style.display = 'none';
+            resetButton.style.display = 'block';
+
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+        
+        function resetCroppers() {
+            const imgElement1 = document.getElementById('image1');
+            const imgElement2 = document.getElementById('image2');
+
+            if (originalSrc1) {
+                imgElement1.src = originalSrc1;
+                cropper1 = new Cropper(imgElement1, cropperOptions);
+            }
+            
+            if (originalSrc2) {
+                imgElement2.src = originalSrc2;
+                cropper2 = new Cropper(imgElement2, cropperOptions);
+            }
+            
+            printButton.style.display = 'block';
+            resetButton.style.display = 'none';
+        }
+
+        window.onafterprint = function() {
+            document.body.classList.remove('preparing-for-print');
+        };
+
+    </script>
+
+</body>
+</html>
