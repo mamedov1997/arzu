@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A4 Çap Proqramı</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+    <style>
+        /* Səhifənin ümumi stilləri */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* İdarəetmə paneli (Çap zamanı görünməyəcək) */
+        .controls {
+            width: 210mm; /* A4 eninə uyğun */
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .controls h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button#print-button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button#print-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* A4 Vərəq Stili */
+        #a4-page {
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm; /* Vərəqin kənar boşluqları */
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Şəkilləri bərabər paylayır */
+        }
+
+        /* Hər bir şəkil üçün yer tutucu */
+        .image-container {
+            width: 100%; /* 210mm - (15mm * 2) = 180mm */
+            height: 128mm; /* Təxminən A4 hündürlüyünün yarısı (boşluqları çıxmaqla) */
+            border: 2px dashed #ccc;
+            background-color: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Cropper üçün vacibdir */
+        }
+
+        /* Yüklənmiş şəkil stilləri */
+        .image-container img {
+            /* Cropper.js bu elementi idarə edəcək */
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ÇAP ÜÇÜN XÜSUSİ STİLLƏR */
+        @media print {
+            /* Çap zamanı idarəetmə panelini və fonu gizlət */
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+            .controls {
+                display: none;
+            }
+
+            /* A4 vərəqini tam səhifə et */
+            #a4-page {
+                box-shadow: none;
+                margin: 0;
+                padding: 15mm; /* Çap kənarları üçün */
+                width: 210mm;
+                height: 297mm;
+            }
+            
+            /* Cropper-ın kəsmə çərçivələrini gizlət */
+            .cropper-container {
+                border: none;
+            }
+            .cropper-view-box, .cropper-face {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            .cropper-line, .cropper-point {
+                display: none !important;
+            }
+            
+            .image-container {
+                border: none; /* Çapda sərhədləri göstərmə */
+                background: none;
+            }
+        }
+        
+        /* Çap pəncərəsi açılmazdan əvvəl tətbiq olunan stil */
+        .preparing-for-print .image-container {
+            border: none;
+            background: none;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2>A4 Çap Parametrləri</h2>
+        
+        <div class="input-group">
+            <label for="image-loader1">Şəkil 1 (Yuxarı):</label>
+            <input type="file" id="image-loader1" accept="image/*">
+        </div>
+        
+        <div class="input-group">
+            <label for="image-loader2">Şəkil 2 (Aşağı):</label>
+            <input type="file" id="image-loader2" accept="image/*">
+        </div>
+        
+        <button id="print-button">ÇAP ET</button>
+    </div>
+
+    <div id="a4-page">
+        <div class="image-container" id="container1">
+            <img id="image1" alt="Şəkil 1 üçün yer">
+        </div>
+        <div class="image-container" id="container2">
+            <img id="image2" alt="Şəkil 2 üçün yer">
+        </div>
+    </div>
+
+    <script>
+        // Cropper.js obyektlərini saxlamaq üçün
+        let cropper1 = null;
+        let cropper2 = null;
+
+        // Fayl yükləyici 1 üçün hadisə
+        document.getElementById('image-loader1').addEventListener('change', function(e) {
+            handleImageUpload(e, 'image1', 1);
+        });
+
+        // Fayl yükləyici 2 üçün hadisə
+        document.getElementById('image-loader2').addEventListener('change', function(e) {
+            handleImageUpload(e, 'image2', 2);
+        });
+
+        // Çap düyməsi üçün hadisə
+        document.getElementById('print-button').addEventListener('click', prepareAndPrint);
+
+        /**
+         * Şəkil yüklənməsini idarə edən funksiya
+         * @param {Event} e - Fayl seçmə hadisəsi
+         * @param {string} imgId - 'img' elementinin ID-si
+         * @param {number} cropperIndex - Hansı cropper olduğunu bildirir (1 və ya 2)
+         */
+        function handleImageUpload(e, imgId, cropperIndex) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgElement = document.getElementById(imgId);
+                imgElement.src = event.target.result;
+
+                // Əvvəlki cropper-ı məhv et (əgər varsa)
+                if (cropperIndex === 1 && cropper1) {
+                    cropper1.destroy();
+                } else if (cropperIndex === 2 && cropper2) {
+                    cropper2.destroy();
+                }
+
+                // Yeni cropper yarat
+                const options = {
+                    aspectRatio: 180 / 128, // Konteynerin ölçüsünə görə (180mm / 128mm)
+                    viewMode: 1, // Kəsmə sahəsini şəkil ilə məhdudlaşdır
+                    autoCropArea: 1.0, // Başlanğıcda bütün şəkli seç
+                    background: false, // Arxa fonu göstərmə
+                    movable: true,
+                    zoomable: true,
+                    rotatable: false,
+                    scalable: false,
+                };
+
+                if (cropperIndex === 1) {
+                    cropper1 = new Cropper(imgElement, options);
+                } else {
+                    cropper2 = new Cropper(imgElement, options);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /**
+         * Çap etməzdən əvvəl kəsilmiş şəkilləri hazırlayır və çap pəncərəsini açır
+         */
+        function prepareAndPrint() {
+            // Çapdan əvvəl cropper-ın interfeysini gizlətmək üçün xüsusi class əlavə et
+            document.body.classList.add('preparing-for-print');
+        
+            // 1-ci şəkli kəs və yerinə qoy
+            if (cropper1) {
+                const croppedCanvas1 = cropper1.getCroppedCanvas({
+                    width: 1800, // Yüksək keyfiyyət üçün (180mm)
+                    imageSmoothingQuality: 'high',
+                });
+                
+                // Cropper-ı məhv et və kəsilmiş şəkli göstər
+                const imgElement1 = document.getElementById('image1');
+                imgElement1.src = croppedCanvas1.toDataURL('image/png');
+                cropper1.destroy();
+            }
+            
+            // 2-ci şəkli kəs və yerinə qoy
+            if (cropper2) {
+                const croppedCanvas2 = cropper2.getCroppedCanvas({
+                    width: 1800, // Yüksək keyfiyyət üçün
+                    imageSmoothingQuality: 'high',
+                });
+                
+                // Cropper-ı məhv et və kəsilmiş şəkli göstər
+                const imgElement2 = document.getElementById('image2');
+                imgElement2.src = croppedCanvas2.toDataURL('image/png');
+                cropper2.destroy();
+            }
+
+            // Brauzerə elementləri yeniləmək üçün qısa fasilə ver
+            setTimeout(() => {
+                window.print(); // Çap pəncərəsini aç
+            }, 100); // 100 millisan saniyə gözlə
+        }
+        
+        // Çap pəncərəsi bağlandıqdan sonra
+        window.onafterprint = function() {
+            // Stili geri qaytar
+            document.body.classList.remove('preparing-for-print');
+            
+            // İstifadəçi yenidən kəsmək istəyərsə, cropper-ları yenidən başlat
+            // (Bu addım üçün səhifənin yenilənməsi daha sadə həlldir,
+            // amma istəsəniz cropper-ları yenidən yarada bilərsiniz)
+            
+            // Sadəlik üçün: istifadəçiyə səhifəni yeniləməyi təklif edə bilərsiniz
+            // və ya şəkilləri yenidən yükləmələrini gözləyə bilərsiniz.
+            // Hazırkı vəziyyətdə, kəsilmiş şəkillər qalacaq.
+            // Yenidən kəsmək üçün şəkli təkrar yükləmək lazımdır.
+        };
+
+    </script>
+
+</body>
+</html>
