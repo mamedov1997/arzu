@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Əsas Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* --- QLOBAL VƏ ƏSAS PARAMETRLƏR --- */
+        :root {
+            --sidebar-width: 260px; /* Menyu genişliyi */
+            --primary-color: #00aaff;
+            --background-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg-hover: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --text-color-muted: #bbbbbb; /* Solğun mətn */
+            --error-color: #ff6b6b;
+            --success-color: #51ffa8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--background-gradient);
+            color: var(--text-color);
+            overflow-x: hidden; 
+        }
+
+        /* ANİMASİYALI ARXA FON */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-gradient);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -100;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* =========================================== */
+        /* ===== GİRİŞ SƏHİFƏSİ (index.html üçün) ===== */
+        /* =========================================== */
+        #login-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        #login-page .login-container { width: 380px; padding: 40px; background: var(--glass-bg-hover); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); animation: fadeIn 1s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        #login-page .login-container h2 { text-align: center; margin-bottom: 30px; font-weight: 300; letter-spacing: 1px; }
+        #login-page .input-group { position: relative; margin-bottom: 25px; }
+        #login-page .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--border-color); }
+        #login-page .input-group input { width: 100%; padding: 15px 15px 15px 45px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); font-size: 16px; transition: all 0.3s ease; }
+        #login-page .input-group input::placeholder { color: var(--text-color-muted); }
+        #login-page .input-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
+        #login-page button { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--primary-color); color: var(--text-color); font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; overflow: hidden; position: relative; }
+        #login-page button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4); }
+        #login-page .loader { width: 18px; height: 18px; border: 2px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #login-page #message { text-align: center; margin-top: 20px; font-size: 14px; }
+        #login-page #message.success { color: var(--success-color); }
+        #login-page #message.error { color: var(--error-color); animation: shake 0.3s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
+
+        /* =========================================== */
+        /* ===== ƏSAS SƏHİFƏ (main.html) ===== */
+        /* =========================================== */
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+            z-index: 10;
+            animation: slideInFromLeft 0.7s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0; 
+        }
+        .sidebar-header h2 { font-size: 22px; font-weight: 500; }
+        .sidebar-header h2 i { margin-right: 10px; color: var(--primary-color); }
+        
+        /* ----- YENİ DƏYİŞİKLİK (BAŞLIQ LİNKİ ÜÇÜN) ----- */
+        .sidebar-header a {
+            text-decoration: none; /* alt xətti silir */
+            color: var(--text-color); /* rəngi bərpa edir */
+            transition: color 0.3s ease;
+        }
+        .sidebar-header a:hover {
+            color: var(--primary-color); /* üzərinə gələndə rəngi dəyişir */
+        }
+        /* ----- DƏYİŞİKLİYİN SONU ----- */
+
+        .menu-list {
+            list-style: none;
+            margin: 0;
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .menu-list::-webkit-scrollbar { width: 6px; }
+        .menu-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; }
+        .menu-list::-webkit-scrollbar-track { background: transparent; }
+        .menu-item { margin-bottom: 10px; }
+        .menu-item a { display: flex; align-items: center; padding: 14px 20px; text-decoration: none; color: var(--text-color-muted); border-radius: 8px; transition: all 0.3s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .menu-item a i { width: 20px; margin-right: 15px; font-size: 18px; flex-shrink: 0; }
+        .menu-item a span { font-size: 16px; font-weight: 400; }
+        .menu-item a:hover { background: var(--glass-bg-hover); color: var(--text-color); transform: translateX(5px); }
+        
+        /* Bu stil indi menyuya kliklənəndə JS vasitəsilə əlavə olunacaq */
+        .menu-item.active a { 
+            background: var(--primary-color); 
+            color: var(--text-color); 
+            font-weight: 500; 
+            box-shadow: 0 5px 10px rgba(0, 170, 255, 0.3); 
+        }
+
+        .main-content-wrapper {
+            margin-left: var(--sidebar-width); 
+            width: calc(100% - var(--sidebar-width));
+            padding: 0;
+        }
+
+        #main-page .main-header {
+            padding: 20px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        #main-page .main-header h1 { font-size: 24px; font-weight: 400; }
+        #main-page .logout-button { text-decoration: none; color: var(--text-color); background: var(--glass-bg-hover); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.3s ease; white-space: nowrap; }
+        #main-page .logout-button:hover { background: var(--error-color); color: var(--text-color); border-color: var(--error-color); }
+
+        #main-page .content-area {
+            padding: 40px;
+        }
+        
+        .content-block {
+            background: var(--glass-bg-hover);
+            backdrop-filter: blur(5px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 1s ease-out; 
+        }
+        
+    </style>
+    </head>
+
+<body id="main-page">
+
+    <div class="background-animation"></div>
+
+    <aside class="sidebar">
+        
+        <div class="sidebar-header">
+            <a href="main.html"> <h2><i class="fas fa-store"></i> Məmmədov</h2> </a>
+        </div>
+        <ul class="menu-list">
+            
+            <li class="menu-item"> 
+                <a href="main.html"> 
+                    <i class="fas fa-boxes-stacked"></i>
+                    <span>Məhsullar üzrə məlumat</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Nağd satış</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Kredit satış</span>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-undo"></i> <span>Geri qaytarma</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-wallet"></i> <span>Kassa mədaxil</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-calendar-check"></i> <span>Kassa gün sonu</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-truck-ramp-box"></i> <span>Mağaza məhsul təhvil</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-user-plus"></i> <span>Yeni müştəri</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-user-check"></i> <span>Müştəri analizi</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-chart-bar"></i> <span>Satış hesabatı</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-file-invoice-dollar"></i> <span>Kassa hesabatı</span> </a>
+            </li>
+            <li class="menu-item">
+                <a href="#"> <i class="fas fa-user-shield"></i> <span>Admin panel</span> </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-content-wrapper">
+        
+        <header class="main-header">
+            <h1>Ana Panel</h1>
+            <a href="index.html" class="logout-button">
+                <i class="fas fa-sign-out-alt"></i> Çıxış
+            </a>
+        </header>
+
+        <main class="content-area">
+            
+            <div class="content-block">
+                
+                </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
