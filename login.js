@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = loginButton.querySelector('.loader');
 
     // ADDIM 1-DƏ ALDIĞINIZ GOOGLE APPS SCRIPT URL-ni BURA YAPIŞDIRIN
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/SİZİN_URL_BURA/exec';
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwy8ObW2MwIjidp1r0z8eD_u4LTQbQoiid391R1cnWHO5fRFvaMOWWnrleaMiJ1MbUTpQ/exec';
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
