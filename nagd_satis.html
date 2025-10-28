@@ -48,12 +48,10 @@
         .content-block { background: var(--glass-bg-hover); backdrop-filter: blur(5px); padding: 30px; border-radius: 15px; border: 1px solid var(--border-color); animation: fadeIn 1s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* =========================================== */
-        /* ===== YENİ: SATIŞ SƏHİFƏSİ STİLLƏRİ ===== */
-        /* =========================================== */
+        /* SATIŞ SƏHİFƏSİ STİLLƏRİ */
         .content-block { margin-bottom: 30px; }
         h3.block-title { font-size: 20px; font-weight: 500; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
-        .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: flex-end; }
+        .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; align-items: flex-end; }
         .form-group { display: flex; flex-direction: column; }
         .form-group label { margin-bottom: 8px; font-size: 14px; color: var(--text-color-muted); }
         .form-group input, .form-group select { padding: 12px 15px; font-size: 16px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); transition: all 0.3s ease; }
@@ -75,30 +73,55 @@
         .complete-sale-button { padding: 15px 40px; font-size: 18px; font-weight: bold; background: var(--success-color); color: #0f2027; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
         .complete-sale-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3); }
 
-        /* ----- YENİ STİLLƏR (SƏBƏT ÜÇÜN) ----- */
-        .results-table td input.cart-quantity-input {
-            width: 70px;
-            padding: 8px;
-            font-size: 14px;
-            text-align: center;
-            background: var(--glass-bg-hover);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 5px;
+        /* SƏBƏT STİLLƏRİ */
+        .results-table td input.cart-quantity-input { width: 70px; padding: 8px; font-size: 14px; text-align: center; background: var(--glass-bg-hover); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 5px; }
+        .remove-button { background: none; border: none; color: var(--error-color); font-size: 18px; cursor: pointer; transition: all 0.3s ease; }
+        .remove-button:hover { transform: scale(1.2); }
+
+        /* ----- YENİ MÜŞTƏRİ FORMASI STİLLƏRİ ----- */
+        #new-customer-form {
+            display: none; /* Standart olaraq gizlidir */
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
         }
-        
-        .remove-button {
-            background: none;
-            border: none;
-            color: var(--error-color);
+        #new-customer-form .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        #new-customer-form h4 {
             font-size: 18px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            grid-column: 1 / -1; /* Bütün sütunları tutsun */
+        }
+        .create-customer-button {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            background: var(--success-color);
+            color: #0f2027;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            align-self: flex-end; /* Grid-də aşağıda olsun */
         }
-        .remove-button:hover {
-            transform: scale(1.2);
+        .create-customer-button:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3);
         }
-        /* ----- YENİ STİLLƏRİN SONU ----- */
+        #selected-customer-info {
+            background-color: var(--glass-bg);
+            border: 1px solid var(--success-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: var(--success-color);
+        }
 
     </style>
     </head>
@@ -145,107 +168,88 @@
             <div class="content-block" id="product-search-block">
                 <h3 class="block-title">1. Məhsul Axtarışı</h3>
                 <div class="search-form">
-                    <div class="form-group">
-                        <label for="product-code">Məhsul kodu</label>
-                        <input type="text" id="product-code" placeholder="Kodu daxil edin...">
-                    </div>
-                    <div class="form-group">
-                        <label for="product-name">Məhsul adı</label>
-                        <input type="text" id="product-name" placeholder="Adı daxil edin...">
-                    </div>
-                    <button id="product-search-button" class="search-button">
-                        <i class="fas fa-search"></i> Axtar
-                    </button>
+                    <div class="form-group"><label for="product-code">Məhsul kodu</label><input type="text" id="product-code" placeholder="Kodu daxil edin..."></div>
+                    <div class="form-group"><label for="product-name">Məhsul adı</label><input type="text" id="product-name" placeholder="Adı daxil edin..."></div>
+                    <button id="product-search-button" class="search-button"><i class="fas fa-search"></i> Axtar</button>
                 </div>
-                <div class="results-table-wrapper" id="product-results-wrapper" style="display: none;">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Kod</th>
-                                <th>Ad</th>
-                                <th>Stok</th>
-                                <th>Qiymət (AZN)</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="product-results-tbody"></tbody>
-                    </table>
-                </div>
+                <div class="results-table-wrapper" id="product-results-wrapper" style="display: none;"><table class="results-table"><thead><tr><th>Kod</th><th>Ad</th><th>Stok</th><th>Qiymət (AZN)</th><th></th></tr></thead><tbody id="product-results-tbody"></tbody></table></div>
                 <p class="search-message" id="product-search-message"></p>
             </div>
             
             <div class="content-block" id="cart-block">
                 <h3 class="block-title">2. Satış Səbəti</h3>
-                <div class="results-table-wrapper">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Kod</th>
-                                <th>Ad</th>
-                                <th>Say</th>
-                                <th>Qiymət (AZN)</th>
-                                <th>Cəm (AZN)</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="cart-tbody">
-                            <tr><td colspan="6" style="text-align: center; color: var(--text-color-muted);">Səbət boşdur</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div class="results-table-wrapper"><table class="results-table"><thead><tr><th>Kod</th><th>Ad</th><th>Say</th><th>Qiymət (AZN)</th><th>Cəm (AZN)</th><th></th></tr></thead><tbody id="cart-tbody"><tr><td colspan="6" style="text-align: center; color: var(--text-color-muted);">Səbət boşdur</td></tr></tbody></table></div>
             </div>
             
             <div class="content-block" id="customer-search-block">
                 <h3 class="block-title">3. Müştəri Məlumatı</h3>
-                <div class="search-form">
-                    <div class="form-group">
-                        <label for="customer-name">Ad/Soyad/Ata adı</label>
-                        <input type="text" id="customer-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-code">Müştəri kodu</label>
-                        <input type="text" id="customer-code">
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-fin">Fin kod</label>
-                        <input type="text" id="customer-fin">
-                    </div>
-                    <button id="customer-search-button" class="search-button">
-                        <i class="fas fa-search"></i> Axtar
-                    </button>
-                </div>
-                <div class="results-table-wrapper" id="customer-results-wrapper" style="display: none;">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Kod</th>
-                                <th>Ad/Soyad/Ata</th>
-                                <th>Fin</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="customer-results-tbody"></tbody>
-                    </table>
-                </div>
-                <p class="search-message" id="customer-search-message"></p>
-                <div id="selected-customer-info" style="display: none; margin-top: 20px;">
+                
+                <div id="selected-customer-info" style="display: none;">
                     <strong>Seçilmiş müştəri:</strong> <span id="selected-customer-name"></span>
+                    <button id="change-customer-button" class="search-button" style="background: var(--error-color); float: right; padding: 8px 15px; font-size: 14px;">Dəyiş</button>
+                </div>
+
+                <div id="customer-search-wrapper">
+                    <div class="search-form">
+                        <div class="form-group"><label for="customer-name">Ad/Soyad/Ata adı</label><input type="text" id="customer-name"></div>
+                        <div class="form-group"><label for="customer-code">Müştəri kodu</label><input type="text" id="customer-code"></div>
+                        <div class="form-group"><label for="customer-fin">Fin kod</label><input type="text" id="customer-fin"></div>
+                        <div class="form-group"><label for="customer-phone">Telefon nömrəsi</label><input type="text" id="customer-phone"></div>
+                        
+                        <button id="customer-search-button" class="search-button"><i class="fas fa-search"></i> Axtar</button>
+                    </div>
+                    
+                    <div class="results-table-wrapper" id="customer-results-wrapper" style="display: none;">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Kod</th>
+                                    <th>Ad/Soyad/Ata</th>
+                                    <th>Fin</th>
+                                    <th>Telefon</th> <th>Cinsi</th> <th></th> </tr>
+                            </thead>
+                            <tbody id="customer-results-tbody"></tbody>
+                        </table>
+                    </div>
+                    <p class="search-message" id="customer-search-message"></p>
+                    
+                    <div id="new-customer-form" style="display: none;">
+                        <h4 class="block-title">Yeni Müştəri Yarat</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="new-customer-name">Ad/Soyad/Ata adı *</label>
+                                <input type="text" id="new-customer-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-customer-phone">Telefon nömrəsi *</label>
+                                <input type="text" id="new-customer-phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-customer-fin">Fin kod</label>
+                                <input type="text" id="new-customer-fin">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-customer-gender">Cinsi *</label>
+                                <select id="new-customer-gender">
+                                    <option value="">Seçin...</option>
+                                    <option value="Kişi">Kişi</option>
+                                    <option value="Qadın">Qadın</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="create-customer-button" class="create-customer-button" style="margin-top: 20px;">
+                            <i class="fas fa-plus"></i> Yarat və Satışa Əlavə Et
+                        </button>
+                        <p class="search-message" id="new-customer-message"></p>
+                    </div>
                 </div>
             </div>
             
             <div class="content-block" id="finalize-block">
                 <h3 class="block-title">4. Satışı Tamamla</h3>
                 <div class="finalize-section">
-                    <div class="form-group">
-                        <label for="payment-method">Ödəniş növü</label>
-                        <select id="payment-method">
-                            <option value="Nağd">Nağd</option>
-                            <option value="Kart">Kart</option>
-                        </select>
-                    </div>
-                    <button id="complete-sale-button" class="complete-sale-button">
-                        <i class="fas fa-check"></i> Satışı Tamamla
-                    </button>
+                    <div class="form-group"><label for="payment-method">Ödəniş növü</label><select id="payment-method"><option value="Nağd">Nağd</option><option value="Kart">Kart</option></select></div>
+                    <button id="complete-sale-button" class="complete-sale-button"><i class="fas fa-check"></i> Satışı Tamamla</button>
                 </div>
             </div>
             
@@ -253,13 +257,17 @@
     </div>
 
     <script>
-        // !!! ÇOX VACİB: ƏN SON YAYIMLADIĞINIZ (DEPLOY) URL-İ BURA YAPIŞDIRIN
+        // !!! ÇOX VACİB: ADDIM 4-DƏ ALDIĞINIZ ƏN YENİ URL-İ BURA YAPIŞDIRIN
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwy8ObW2MwIjidp1r0z8eD_u4LTQbQoiid391R1cnWHO5fRFvaMOWWnrleaMiJ1MbUTpQ/exec';
 
-        // ===== QLOBAL ELEMENTLƏR VƏ YADDAŞ (STATE) =====
-        let salesCart = []; // Səbəti yaddaşda saxlayan massiv
+        // ===== QLOBAL YADDAŞ (STATE) =====
+        let salesCart = []; // Səbət
+        let selectedCustomer = null; // Seçilmiş müştəri
+
+        // ===== ELEMENTLƏRİN SEÇİLMƏSİ (QLOBAL) =====
         const cartTbody = document.getElementById('cart-tbody');
         const productResultsTbody = document.getElementById('product-results-tbody');
+        
         
         // ===========================================
         // ===== 1. MƏHSUL AXTARIŞI MƏNTİQİ =====
@@ -334,148 +342,267 @@
         }
 
         // ===========================================
-        // ===== YENİ: 2. SƏBƏTƏ ƏLAVƏ ETMƏ MƏNTİQİ =====
+        // ===== 2. SƏBƏTƏ ƏLAVƏ ETMƏ MƏNTİQİ =====
         // ===========================================
-
-        // Axtarış cədvəlinə (statiq valideyn) klikləmə əlavə edirik (Event Delegation)
-        // Bu, dinamik yaranan "Əlavə et" düymələrini tutur
         productResultsTbody.addEventListener('click', (event) => {
-            // Yoxlayırıq ki, kliklənən element "add-button" class-ına malikdirmi
             if (event.target.classList.contains('add-button') || event.target.closest('.add-button')) {
                 const button = event.target.closest('.add-button');
-                
-                // Məhsulun məlumatlarını düymənin data- atributlarından götürürük
                 const productToAdd = {
                     kod: button.dataset.kod,
                     ad: button.dataset.ad,
                     qiymet: parseFloat(button.dataset.qiymet),
                     stok: parseInt(button.dataset.stok),
-                    say: 1 // Səbətə 1 ədəd əlavə edirik
+                    say: 1
                 };
-
-                // Məhsulu səbətə əlavə edən funksiyanı çağırırıq
                 addProductToCart(productToAdd);
             }
         });
 
-        /**
-         * Məhsulu 'salesCart' massivinə əlavə edir və səbəti yeniləyir.
-         */
         function addProductToCart(product) {
-            // Yoxlayırıq ki, bu məhsul (koduna görə) artıq səbətdə varmı
             const existingItem = salesCart.find(item => item.kod === product.kod);
-
             if (existingItem) {
-                // Əgər varsa, sadəcə sayını artırırıq
-                
-                // Stok yoxlaması
                 if (existingItem.say + 1 > existingItem.stok) {
                     alert(`Stokda yalnız ${existingItem.stok} ədəd ${existingItem.ad} var. Daha çox əlavə edə bilməzsiniz.`);
-                    return; // Funksiyanı dayandırırıq
+                    return;
                 }
                 existingItem.say++;
             } else {
-                // Əgər yoxdursa, yeni məhsul kimi massivə əlavə edirik
-                
-                // Stok yoxlaması
                 if (product.say > product.stok) {
                     alert(`Stokda yalnız ${product.stok} ədəd ${product.ad} var.`);
-                    return; // Funksiyanı dayandırırıq
+                    return;
                 }
                 salesCart.push(product);
             }
-
-            // Səbət massivi yeniləndikdən sonra, cədvəli yenidən çəkirik (render)
             renderCart();
         }
 
-        /**
-         * 'salesCart' massivinə əsasən "Satış Səbəti" cədvəlini yenidən qurur.
-         */
         function renderCart() {
-            cartTbody.innerHTML = ''; // Səbəti təmizləyirik
-
+            cartTbody.innerHTML = ''; 
             if (salesCart.length === 0) {
-                // Səbət boşdursa, mesaj göstəririk
                 cartTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-color-muted);">Səbət boşdur</td></tr>';
                 return;
             }
-
-            // Səbətdəki hər bir məhsul üçün cədvələ yeni sətir əlavə edirik
             salesCart.forEach((item, index) => {
                 const row = document.createElement('tr');
                 const total = item.say * item.qiymet;
-                
                 row.innerHTML = `
                     <td>${item.kod}</td>
                     <td>${item.ad}</td>
-                    <td>
-                        <input type="number" class="cart-quantity-input" value="${item.say}" min="1" max="${item.stok}" data-index="${index}">
-                    </td>
+                    <td><input type="number" class="cart-quantity-input" value="${item.say}" min="1" max="${item.stok}" data-index="${index}"></td>
                     <td>${item.qiymet.toFixed(2)} AZN</td>
                     <td>${total.toFixed(2)} AZN</td>
-                    <td>
-                        <button class="remove-button" data-index="${index}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
+                    <td><button class="remove-button" data-index="${index}"><i class="fas fa-trash-alt"></i></button></td>
                 `;
                 cartTbody.appendChild(row);
             });
         }
         
-        // Səbət cədvəlindəki dinamik düymələr üçün (Sil və Say dəyişmə)
         cartTbody.addEventListener('click', (event) => {
-            // Əgər "Sil" düyməsi (remove-button) kliklənibsə
             if (event.target.classList.contains('remove-button') || event.target.closest('.remove-button')) {
                 const button = event.target.closest('.remove-button');
-                const indexToRemove = parseInt(button.dataset.index);
-                removeCartItem(indexToRemove);
+                removeCartItem(parseInt(button.dataset.index));
             }
         });
 
         cartTbody.addEventListener('change', (event) => {
-            // Əgər "Say" xanası (cart-quantity-input) dəyişdirilibsə
             if (event.target.classList.contains('cart-quantity-input')) {
                 const input = event.target;
                 const indexToUpdate = parseInt(input.dataset.index);
                 let newQuantity = parseInt(input.value);
                 const maxStok = parseInt(input.max);
-                
                 if (newQuantity > maxStok) {
                     alert(`Stokda yalnız ${maxStok} ədəd var.`);
-                    newQuantity = maxStok; // Dəyəri maksimuma bərabər edirik
+                    newQuantity = maxStok;
                 }
-                if (newQuantity < 1) {
-                    newQuantity = 1; // Dəyər 1-dən az ola bilməz
-                }
-                
+                if (newQuantity < 1) newQuantity = 1;
                 updateCartQuantity(indexToUpdate, newQuantity);
             }
         });
 
-        /**
-         * Məhsulu səbətdən silir (index-ə görə)
-         */
         function removeCartItem(index) {
-            salesCart.splice(index, 1); // Massivdən həmin elementi silirik
-            renderCart(); // Səbəti yenidən çəkirik
+            salesCart.splice(index, 1);
+            renderCart();
         }
 
-        /**
-         * Səbətdəki məhsulun sayını dəyişir
-         */
         function updateCartQuantity(index, newQuantity) {
             if (salesCart[index]) {
                 salesCart[index].say = newQuantity;
-                renderCart(); // Səbəti yenidən çəkirik
+                renderCart();
             }
         }
 
         // ===========================================
-        // ===== 3. MÜŞTƏRİ AXTARIŞI MƏNTİQİ =====
+        // ===== YENİ: 3. MÜŞTƏRİ AXTARIŞI MƏNTİQİ =====
         // ===========================================
-        // (Növbəti addımda bura kod yazacağıq)
+
+        // Elementlərin seçilməsi
+        const customerSearchWrapper = document.getElementById('customer-search-wrapper');
+        const customerSearchButton = document.getElementById('customer-search-button');
+        const customerNameInput = document.getElementById('customer-name');
+        const customerCodeInput = document.getElementById('customer-code');
+        const customerFinInput = document.getElementById('customer-fin');
+        const customerPhoneInput = document.getElementById('customer-phone'); // Yeni
+        const customerResultsWrapper = document.getElementById('customer-results-wrapper');
+        const customerResultsTbody = document.getElementById('customer-results-tbody');
+        const customerSearchMessage = document.getElementById('customer-search-message');
+        
+        const newCustomerForm = document.getElementById('new-customer-form');
+        const newCustomerMessage = document.getElementById('new-customer-message');
+        const createCustomerButton = document.getElementById('create-customer-button');
+        
+        const selectedCustomerInfo = document.getElementById('selected-customer-info');
+        const selectedCustomerNameSpan = document.getElementById('selected-customer-name');
+        const changeCustomerButton = document.getElementById('change-customer-button');
+
+        // Müştəri "Axtar" düyməsi
+        customerSearchButton.addEventListener('click', async () => {
+            const ad = customerNameInput.value.trim();
+            const kod = customerCodeInput.value.trim();
+            const fin = customerFinInput.value.trim();
+            const telefon = customerPhoneInput.value.trim();
+
+            if (!ad && !kod && !fin && !telefon) {
+                customerSearchMessage.textContent = 'Axtarış üçün ən azı bir xananı doldurun.';
+                customerSearchMessage.style.display = 'block';
+                return;
+            }
+
+            customerSearchButton.disabled = true;
+            customerSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gözləyin...';
+            customerResultsTbody.innerHTML = '';
+            customerSearchMessage.style.display = 'none';
+            newCustomerForm.style.display = 'none';
+
+            try {
+                const url = `${GAS_WEB_APP_URL}?action=searchCustomers&ad=${encodeURIComponent(ad)}&kod=${encodeURIComponent(kod)}&fin=${encodeURIComponent(fin)}&telefon=${encodeURIComponent(telefon)}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Server xətası');
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    if (result.data && result.data.length > 0) {
+                        // Müştəri tapıldı
+                        displayCustomerResults(result.data);
+                        customerResultsWrapper.style.display = 'block';
+                    } else {
+                        // Müştəri tapılmadı, YENİ YARATMA FORMASINI GÖSTƏR
+                        customerSearchMessage.textContent = 'Müştəri tapılmadı. Zəhmət olmasa, yeni müştəri yaradın.';
+                        customerSearchMessage.style.display = 'block';
+                        
+                        // Axtarılan məlumatları yeni forma xanalarına doldur
+                        document.getElementById('new-customer-name').value = ad;
+                        document.getElementById('new-customer-phone').value = telefon;
+                        document.getElementById('new-customer-fin').value = fin;
+                        
+                        newCustomerForm.style.display = 'block';
+                    }
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                customerSearchMessage.textContent = 'Xəta: ' + error.message;
+                customerSearchMessage.style.display = 'block';
+            } finally {
+                customerSearchButton.disabled = false;
+                customerSearchButton.innerHTML = '<i class="fas fa-search"></i> Axtar';
+            }
+        });
+        
+        // Axtarış nəticələrini (Müştərilər) cədvələ çəkir
+        function displayCustomerResults(data) {
+            customerResultsTbody.innerHTML = '';
+            data.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.kod}</td>
+                    <td>${customer.ad}</td>
+                    <td>${customer.fin || '-'}</td>
+                    <td>${customer.telefon || '-'}</td>
+                    <td>${customer.cinsi || '-'}</td>
+                    <td>
+                        <button class="add-button" data-customer-json='${JSON.stringify(customer)}'>
+                            <i class="fas fa-check"></i> Seç
+                        </button>
+                    </td>
+                `;
+                customerResultsTbody.appendChild(row);
+            });
+        }
+        
+        // Axtarış cədvəlində "Seç" düyməsinə klikləmək
+        customerResultsTbody.addEventListener('click', (event) => {
+             if (event.target.classList.contains('add-button') || event.target.closest('.add-button')) {
+                const button = event.target.closest('.add-button');
+                // Müştəri obyektini JSON-dan götürürük
+                const customer = JSON.parse(button.dataset.customerJson);
+                selectCustomer(customer);
+             }
+        });
+
+        // "Yeni Müştəri Yarat" düyməsi
+        createCustomerButton.addEventListener('click', async () => {
+            const ad = document.getElementById('new-customer-name').value.trim();
+            const telefon = document.getElementById('new-customer-phone').value.trim();
+            const cinsi = document.getElementById('new-customer-gender').value;
+            const fin = document.getElementById('new-customer-fin').value.trim();
+
+            if (!ad || !telefon || !cinsi) {
+                newCustomerMessage.textContent = 'Ad/Soyad, Telefon və Cinsi xanaları mütləqdir.';
+                newCustomerMessage.style.display = 'block';
+                return;
+            }
+
+            createCustomerButton.disabled = true;
+            createCustomerButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yaradılır...';
+            newCustomerMessage.style.display = 'none';
+
+            try {
+                const payload = { ad, telefon, cinsi, fin };
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'addNewCustomer', payload: payload })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Müştəri yaradıldı, onu seçirik
+                    selectCustomer(result.data);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                newCustomerMessage.textContent = 'Xəta: ' + error.message;
+                newCustomerMessage.style.display = 'block';
+            } finally {
+                createCustomerButton.disabled = false;
+                createCustomerButton.innerHTML = '<i class="fas fa-plus"></i> Yarat və Satışa Əlavə Et';
+            }
+        });
+
+        // Müştərini seçən əsas funksiya
+        function selectCustomer(customer) {
+            selectedCustomer = customer; // Müştərini qlobal yaddaşa yaz
+            selectedCustomerNameSpan.textContent = `${customer.ad} (Kod: ${customer.kod})`;
+            selectedCustomerInfo.style.display = 'block';
+            
+            // Axtarışla bağlı hər şeyi gizlət
+            customerSearchWrapper.style.display = 'none'; 
+        }
+
+        // "Dəyiş" düyməsi (seçimi ləğv etmək)
+        changeCustomerButton.addEventListener('click', () => {
+            selectedCustomer = null; // Yaddaşı təmizlə
+            selectedCustomerInfo.style.display = 'none';
+            
+            // Axtarış blokunu yenidən göstər
+            customerSearchWrapper.style.display = 'block';
+            // Köhnə nəticələri və formaları təmizlə
+            customerResultsWrapper.style.display = 'none';
+            newCustomerForm.style.display = 'none';
+            customerSearchMessage.style.display = 'none';
+        });
 
         // ===========================================
         // ===== 4. SATIŞI TAMAMLAMA MƏNTİQİ =====
