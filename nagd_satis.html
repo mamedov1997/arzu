@@ -53,163 +53,29 @@
         /* =========================================== */
         /* ===== YENİ: SATIŞ SƏHİFƏSİ STİLLƏRİ ===== */
         /* =========================================== */
-
-        /* Hər bir bloku ayırmaq üçün */
-        .content-block {
-            margin-bottom: 30px;
-        }
-
-        /* Blok başlığı (Məhsul axtarışı, Müştəri məlumatı və s.) */
-        h3.block-title {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        /* Formalar (axtarış xanaları) */
-        .search-form {
-            display: grid;
-            /* Xanaların avtomatik ölçülməsi üçün */
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            align-items: flex-end; /* Düyməni xanalarla eyni səviyyəyə gətirir */
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: var(--text-color-muted);
-        }
-        .form-group input, .form-group select {
-            padding: 12px 15px;
-            font-size: 16px;
-            background: var(--glass-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-        /* Select (Kart/Nağd) üçün oxun rəngi */
-        .form-group select {
-           appearance: none;
-           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bbbbbb' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-           background-repeat: no-repeat;
-           background-position: right 15px center;
-           padding-right: 40px;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
-        }
-        
-        /* Düymələr */
-        .search-button {
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            background: var(--primary-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        .search-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4);
-        }
-        .search-button:disabled {
-            background: var(--text-color-muted);
-            cursor: not-allowed;
-        }
-        
-        /* Cədvəllər (Axtarış nəticəsi və Səbət) */
-        .results-table-wrapper {
-            margin-top: 20px;
-            overflow-x: auto;
-            max-height: 300px; /* Cədvəl çox uzundursa, scroll yaransın */
-        }
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .results-table th, .results-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-        .results-table th {
-            background-color: var(--glass-bg-hover);
-            font-size: 14px;
-            text-transform: uppercase;
-            color: var(--text-color-muted);
-            position: sticky; top: 0; /* Scroll zamanı başlıq yapışsın */
-        }
-        .results-table tr:hover {
-            background-color: var(--glass-bg-hover);
-        }
-        
-        /* "Əlavə Et" düyməsi (cədvəl daxilində) */
-        .add-button {
-            padding: 8px 15px;
-            font-size: 14px;
-            background: var(--success-color);
-            color: #0f2027;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .add-button:hover {
-            opacity: 0.8;
-        }
-
-        /* Mesajlar */
-        .search-message {
-            margin-top: 20px;
-            text-align: center;
-            color: var(--text-color-muted);
-            display: none; /* Standart olaraq gizlidir */
-        }
-        
-        /* Satışı Tamamlama Bloku */
-        .finalize-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .finalize-section .form-group {
-            min-width: 200px;
-        }
-        .complete-sale-button {
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: bold;
-            background: var(--success-color);
-            color: #0f2027;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .complete-sale-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3);
-        }
+        .content-block { margin-bottom: 30px; }
+        h3.block-title { font-size: 20px; font-weight: 500; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: flex-end; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 8px; font-size: 14px; color: var(--text-color-muted); }
+        .form-group input, .form-group select { padding: 12px 15px; font-size: 16px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); transition: all 0.3s ease; }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bbbbbb' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 40px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
+        .search-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--primary-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
+        .search-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4); }
+        .search-button:disabled { background: var(--text-color-muted); cursor: not-allowed; }
+        .results-table-wrapper { margin-top: 20px; overflow-x: auto; max-height: 300px; }
+        .results-table { width: 100%; border-collapse: collapse; }
+        .results-table th, .results-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        .results-table th { background-color: var(--glass-bg-hover); font-size: 14px; text-transform: uppercase; color: var(--text-color-muted); position: sticky; top: 0; }
+        .results-table tr:hover { background-color: var(--glass-bg-hover); }
+        .add-button { padding: 8px 15px; font-size: 14px; background: var(--success-color); color: #0f2027; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        .add-button:hover { opacity: 0.8; }
+        .search-message { margin-top: 20px; text-align: center; color: var(--text-color-muted); display: none; }
+        .finalize-section { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-top: 30px; }
+        .finalize-section .form-group { min-width: 200px; }
+        .complete-sale-button { padding: 15px 40px; font-size: 18px; font-weight: bold; background: var(--success-color); color: #0f2027; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        .complete-sale-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3); }
 
     </style>
     </head>
@@ -364,19 +230,119 @@
     </div>
 
     <script>
-        // ADDIM 3-DƏ ƏLDƏ ETDİYİNİZ YENİ URL-İ BURA YAPIŞDIRIN
+        // !!! ÇOX VACİB: ƏN SON YAYIMLADIĞINIZ (DEPLOY) URL-İ BURA YAPIŞDIRIN
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwy8ObW2MwIjidp1r0z8eD_u4LTQbQoiid391R1cnWHO5fRFvaMOWWnrleaMiJ1MbUTpQ/exec';
 
-        // -------- NÖVBƏTİ ADDIMDA BÜTÜN DÜYMƏLƏRİN MƏNTİQİNİ (JS) BURA YAZACAĞIQ --------
-        
-        // --- Hələlik boşdur ---
-        
-        // 1. Məhsul axtarışı (product-search-button) üçün listener
-        // 2. Səbətə əlavə etmək (add-to-cart) üçün listener
-        // 3. Müştəri axtarışı (customer-search-button) üçün listener
-        // 4. Müştəri seçmək (select-customer) üçün listener
-        // 5. Satışı tamamlamaq (complete-sale-button) üçün listener
-        
+        // ===========================================
+        // ===== 1. MƏHSUL AXTARIŞI MƏNTİQİ =====
+        // ===========================================
+
+        // Axtarış bloku üçün elementləri seçirik
+        const productSearchButton = document.getElementById('product-search-button');
+        const productCodeInput = document.getElementById('product-code');
+        const productNameInput = document.getElementById('product-name');
+        const productResultsWrapper = document.getElementById('product-results-wrapper');
+        const productResultsTbody = document.getElementById('product-results-tbody');
+        const productSearchMessage = document.getElementById('product-search-message');
+
+        // "Axtar" düyməsinə klikləmə hadisəsini izləyirik
+        productSearchButton.addEventListener('click', async () => {
+            const code = productCodeInput.value.trim();
+            const name = productNameInput.value.trim();
+
+            if (!code && !name) {
+                productSearchMessage.textContent = 'Axtarış üçün ən azı bir xananı doldurun.';
+                productSearchMessage.style.display = 'block';
+                productResultsWrapper.style.display = 'none';
+                return;
+            }
+
+            productSearchButton.disabled = true;
+            productSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gözləyin...';
+            productResultsTbody.innerHTML = ''; 
+            productSearchMessage.style.display = 'none'; 
+
+            try {
+                const url = `${GAS_WEB_APP_URL}?action=searchProducts&code=${encodeURIComponent(code)}&name=${encodeURIComponent(name)}`;
+                
+                const response = await fetch(url, { method: 'GET' });
+
+                if (!response.ok) {
+                    throw new Error('Server xətası: ' + response.statusText);
+                }
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    if (result.data && result.data.length > 0) {
+                        displayProductResults(result.data);
+                        productResultsWrapper.style.display = 'block'; 
+                    } else {
+                        productSearchMessage.textContent = 'Axtarışa uyğun nəticə tapılmadı.';
+                        productSearchMessage.style.display = 'block';
+                        productResultsWrapper.style.display = 'none'; 
+                    }
+                } else {
+                    throw new Error(result.message || 'Naməlum xəta baş verdi.');
+                }
+
+            } catch (error) {
+                productSearchMessage.textContent = 'Xəta: ' + error.message;
+                productSearchMessage.style.display = 'block';
+            } finally {
+                productSearchButton.disabled = false;
+                productSearchButton.innerHTML = '<i class="fas fa-search"></i> Axtar';
+            }
+        });
+
+        /**
+         * Məhsul axtarışının nəticələrini cədvələ əlavə edən köməkçi funksiya
+         */
+        function displayProductResults(data) {
+            productResultsTbody.innerHTML = '';
+            
+            data.forEach(product => {
+                const row = document.createElement('tr');
+                
+                // Qiymətin "undefined" gəlməməsi üçün yoxlama (əvvəlki cavabdakı düzəlişə əsasən)
+                const price = product.qiymet !== undefined ? `${product.qiymet} AZN` : 'Qeyd olunmayıb';
+                
+                row.innerHTML = `
+                    <td>${product.kod}</td>
+                    <td>${product.ad}</td>
+                    <td>${product.stok}</td>
+                    <td>${price}</td>
+                    <td>
+                        <button class="add-button" 
+                                data-kod="${product.kod}" 
+                                data-ad="${product.ad}" 
+                                data-qiymet="${product.qiymet || 0}"
+                                data-stok="${product.stok}">
+                            <i class="fas fa-plus"></i> Əlavə et
+                        </button>
+                    </td>
+                `;
+                productResultsTbody.appendChild(row);
+            });
+        }
+
+
+        // ===========================================
+        // ===== 2. SƏBƏTƏ ƏLAVƏ ETMƏ MƏNTİQİ =====
+        // ===========================================
+        // (Növbəti addımda bura kod yazacağıq)
+
+
+        // ===========================================
+        // ===== 3. MÜŞTƏRİ AXTARIŞI MƏNTİQİ =====
+        // ===========================================
+        // (Növbəti addımda bura kod yazacağıq)
+
+        // ===========================================
+        // ===== 4. SATIŞI TAMAMLAMA MƏNTİQİ =====
+        // ===========================================
+        // (Növbəti addımda bura kod yazacağıq)
+
     </script>
 </body>
 </html>
