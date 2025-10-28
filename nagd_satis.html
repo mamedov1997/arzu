@@ -55,7 +55,22 @@
         .form-group { display: flex; flex-direction: column; }
         .form-group label { margin-bottom: 8px; font-size: 14px; color: var(--text-color-muted); }
         .form-group input, .form-group select { padding: 12px 15px; font-size: 16px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); transition: all 0.3s ease; }
-        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bbbbbb' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 40px; }
+        
+        /* ----- DÜZƏLİŞ: SEÇİM XANASI (DROPDOWN) ----- */
+        .form-group select { 
+            appearance: none; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bbbbbb' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); 
+            background-repeat: no-repeat; 
+            background-position: right 15px center; 
+            padding-right: 40px; 
+        }
+        /* Açılan siyahının arxa fonu və mətni */
+        .form-group select option {
+            background: #0f2027; /* Qara arxa fon */
+            color: var(--text-color); /* Ağ mətn */
+        }
+        /* ----- DÜZƏLİŞİN SONU ----- */
+
         .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
         .search-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--primary-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
         .search-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4); }
@@ -72,90 +87,96 @@
         .finalize-section .form-group { min-width: 200px; }
         .complete-sale-button { padding: 15px 40px; font-size: 18px; font-weight: bold; background: var(--success-color); color: #0f2027; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
         .complete-sale-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3); }
+        .complete-sale-button:disabled { background: var(--text-color-muted); box-shadow: none; transform: none; }
         .results-table td input.cart-quantity-input { width: 70px; padding: 8px; font-size: 14px; text-align: center; background: var(--glass-bg-hover); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 5px; }
         .remove-button { background: none; border: none; color: var(--error-color); font-size: 18px; cursor: pointer; transition: all 0.3s ease; }
         .remove-button:hover { transform: scale(1.2); }
         
-        /* === YENİ DÜYMƏ VƏ FORMA STİLLƏRİ === */
-        .customer-actions {
-            display: flex;
-            gap: 20px;
-            align-items: flex-end;
-        }
-        .secondary-button { /* "Yeni Müştəri Yarat" düyməsi üçün */
-            background: var(--glass-bg-hover);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
-        .secondary-button:hover {
-            background: var(--glass-bg-hover);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            box-shadow: none;
-        }
+        .customer-actions { display: flex; gap: 20px; align-items: flex-end; }
+        .secondary-button { background: var(--glass-bg-hover); color: var(--text-color); border: 1px solid var(--border-color); }
+        .secondary-button:hover { background: var(--glass-bg-hover); border-color: var(--primary-color); color: var(--primary-color); box-shadow: none; }
+        #new-customer-form { margin-top: 25px; padding-top: 25px; border-top: 1px solid var(--border-color); }
+        #new-customer-form .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        #new-customer-form h4 { font-size: 18px; font-weight: 500; color: var(--text-color); margin-bottom: 20px; grid-column: 1 / -1; }
+        .create-customer-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--success-color); color: #0f2027; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; align-self: flex-end; }
+        .create-customer-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3); }
+        #selected-customer-info { background-color: var(--glass-bg); border: 1px solid var(--success-color); padding: 15px; border-radius: 8px; margin-top: 20px; color: var(--success-color); }
         
-        #new-customer-form {
-            /* display: none; Artıq lazım deyil, wrapper idarə edir */
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
+        /* BİLDİRİŞ (TOAST) */
+        .toast-message { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: #0f2027; padding: 15px 25px; border-radius: 8px; z-index: 1001; font-weight: bold; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .toast-message.show { opacity: 1; visibility: visible; top: 30px; }
+        .toast-message.error { background-color: var(--error-color); color: var(--text-color); }
+
+        /* ----- YENİ: ÇEK (QƏBZ) MODALI ----- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none; /* Standart olaraq gizlidir */
+            justify-content: center;
+            align-items: center;
         }
-        #new-customer-form .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+        .modal-content {
+            background: #ffffff;
+            color: #000000;
+            border-radius: 8px;
+            padding: 30px;
+            width: 90%;
+            max-width: 480px; /* Çek eni */
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        #new-customer-form h4 {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--text-color);
+        .modal-header {
+            text-align: center;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 15px;
             margin-bottom: 20px;
-            grid-column: 1 / -1; 
         }
-        .create-customer-button {
+        .modal-header h2 { font-size: 24px; margin-bottom: 5px; }
+        .receipt-info { margin-bottom: 20px; }
+        .receipt-info p { margin-bottom: 8px; font-size: 14px; }
+        .receipt-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .receipt-table th, .receipt-table td { padding: 8px 0; font-size: 14px; }
+        .receipt-table thead th { border-bottom: 1px solid #000; text-align: left; }
+        .receipt-table td:nth-child(3) { text-align: right; }
+        .receipt-table tfoot td { border-top: 1px dashed #555; font-weight: bold; padding-top: 10px; }
+        .modal-footer { text-align: center; margin-top: 30px; }
+        .modal-button {
             padding: 12px 25px;
             font-size: 16px;
             font-weight: bold;
-            background: var(--success-color);
-            color: #0f2027;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
-            align-self: flex-end; 
+            margin: 0 10px;
         }
-        .create-customer-button:hover {
-             transform: translateY(-2px);
-             box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3);
-        }
-        #selected-customer-info {
-            background-color: var(--glass-bg);
-            border: 1px solid var(--success-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            color: var(--success-color);
-        }
-        .toast-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--success-color);
-            color: #0f2027;
-            padding: 15px 25px;
-            border-radius: 8px;
-            z-index: 1001;
-            font-weight: bold;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        .toast-message.show {
-            opacity: 1;
-            visibility: visible;
-            top: 30px;
+        .print-button { background-color: var(--primary-color); color: var(--text-color); }
+        .close-button { background-color: #aaa; color: #000; }
+        
+        /* Çap zamanı lazımsız elementləri gizlət */
+        @media print {
+            body > *:not(.modal-overlay) { display: none; }
+            .modal-overlay {
+                background: none;
+                backdrop-filter: none;
+                display: flex !important;
+                justify-content: flex-start;
+                align-items: flex-start;
+            }
+            .modal-content {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+                max-height: none;
+            }
+            .modal-footer { display: none; } /* Çapda düymələr görünməsin */
         }
     </style>
     </head>
@@ -164,10 +185,39 @@
     
     <div id="toast-message" class="toast-message"></div>
 
+    <div id="receipt-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Məmmədov Satış</h2>
+                <p>Satış Qəbzi</p>
+            </div>
+            <div class="receipt-info" id="receipt-details">
+                </div>
+            <table class="receipt-table">
+                <thead>
+                    <tr>
+                        <th>Məhsul</th>
+                        <th>Say</th>
+                        <th>Cəm</th>
+                    </tr>
+                </thead>
+                <tbody id="receipt-items">
+                    </tbody>
+                <tfoot id="receipt-total">
+                    </tfoot>
+            </table>
+            <p style="text-align: center; font-size: 12px;">Təşəkkür edirik!</p>
+            <div class="modal-footer">
+                <button id="print-receipt-button" class="modal-button print-button"><i class="fas fa-print"></i> Çap Et</button>
+                <button id="close-receipt-button" class="modal-button close-button"><i class="fas fa-times"></i> Bağla</button>
+            </div>
+        </div>
+    </div>
+
     <div class="background-animation"></div>
 
     <aside class="sidebar">
-        <div class="sidebar-header">
+         <div class="sidebar-header">
             <a href="main.html"> <h2><i class="fas fa-store"></i> Məmmədov</h2> </a>
         </div>
         <ul class="menu-list">
@@ -187,7 +237,6 @@
     </aside>
 
     <div class="main-content-wrapper">
-        
         <header class="main-header">
             <h1>Nağd Satış</h1>
             <a href="index.html" class="logout-button"> <i class="fas fa-sign-out-alt"></i> Çıxış </a>
@@ -213,14 +262,11 @@
             
             <div class="content-block" id="customer-block">
                 <h3 class="block-title">3. Müştəri Məlumatı</h3>
-                
                 <div id="selected-customer-info" style="display: none;">
                     <strong>Seçilmiş müştəri:</strong> <span id="selected-customer-name"></span>
                     <button id="change-customer-button" class="search-button" style="background: var(--error-color); float: right; padding: 8px 15px; font-size: 14px;">Dəyiş</button>
                 </div>
-
                 <div id="customer-forms-wrapper">
-                    
                     <div id="customer-search-wrapper">
                         <div class="search-form">
                             <div class="form-group"><label for="customer-name">Ad/Soyad/Ata adı</label><input type="text" id="customer-name"></div>
@@ -233,18 +279,10 @@
                             <button id="show-new-customer-button" class="search-button secondary-button"><i class="fas fa-user-plus"></i> Yeni Müştəri Yarat</button>
                         </div>
                         <div class="results-table-wrapper" id="customer-results-wrapper" style="display: none;">
-                            <table class="results-table">
-                                <thead>
-                                    <tr>
-                                        <th>Kod</th><th>Ad/Soyad/Ata</th><th>Fin</th><th>Telefon</th><th>Cinsi</th><th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="customer-results-tbody"></tbody>
-                            </table>
+                            <table class="results-table"><thead><tr><th>Kod</th><th>Ad/Soyad/Ata</th><th>Fin</th><th>Telefon</th><th>Cinsi</th><th></th></tr></thead><tbody id="customer-results-tbody"></tbody></table>
                         </div>
                         <p class="search-message" id="customer-search-message"></p>
                     </div>
-                    
                     <div id="new-customer-form" style="display: none;">
                         <h4 class="block-title">Yeni Müştəri Yarat</h4>
                         <div class="form-grid">
@@ -252,9 +290,7 @@
                             <div class="form-group"><label for="new-customer-phone">Telefon nömrəsi *</label><input type="text" id="new-customer-phone"></div>
                             <div class="form-group"><label for="new-customer-fin">Fin kod</label><input type="text" id="new-customer-fin"></div>
                             <div class="form-group"><label for="new-customer-gender">Cinsi *</label>
-                                <select id="new-customer-gender">
-                                    <option value="">Seçin...</option><option value="Kişi">Kişi</option><option value="Qadın">Qadın</option>
-                                </select>
+                                <select id="new-customer-gender"><option value="">Seçin...</option><option value="Kişi">Kişi</option><option value="Qadın">Qadın</option></select>
                             </div>
                         </div>
                         <div class="customer-actions" style="margin-top: 20px;">
@@ -292,12 +328,12 @@
         // ===========================================
         // ===== BİLDİRİŞ (TOAST) FUNKSİYASI =====
         // ===========================================
-        function showToast(message) {
+        function showToast(message, isError = false) {
             toastMessage.textContent = message;
-            toastMessage.classList.add('show');
+            toastMessage.className = isError ? 'toast-message show error' : 'toast-message show';
             setTimeout(() => {
                 toastMessage.classList.remove('show');
-            }, 3000); // 3 saniyə sonra gizlənir
+            }, 3000); 
         }
         
         // ===========================================
@@ -405,7 +441,6 @@
                 salesCart.push(product);
             }
             renderCart();
-            // YENİ: Bildiriş göstər
             showToast(`"${product.ad}" səbətə əlavə olundu!`);
         }
 
@@ -467,8 +502,6 @@
         // ===========================================
         // ===== 3. MÜŞTƏRİ AXTARIŞI/YARATMA MƏNTİQİ =====
         // ===========================================
-
-        // Elementlərin seçilməsi
         const customerFormsWrapper = document.getElementById('customer-forms-wrapper');
         const customerSearchWrapper = document.getElementById('customer-search-wrapper');
         const customerSearchButton = document.getElementById('customer-search-button');
@@ -479,41 +512,34 @@
         const customerResultsWrapper = document.getElementById('customer-results-wrapper');
         const customerResultsTbody = document.getElementById('customer-results-tbody');
         const customerSearchMessage = document.getElementById('customer-search-message');
-        
         const newCustomerForm = document.getElementById('new-customer-form');
         const newCustomerMessage = document.getElementById('new-customer-message');
         const createCustomerButton = document.getElementById('create-customer-button');
         const showNewCustomerButton = document.getElementById('show-new-customer-button');
         const cancelNewCustomerButton = document.getElementById('cancel-new-customer-button');
-        
         const selectedCustomerInfo = document.getElementById('selected-customer-info');
         const selectedCustomerNameSpan = document.getElementById('selected-customer-name');
         const changeCustomerButton = document.getElementById('change-customer-button');
 
-        // "Müştəri Axtar" düyməsi
         customerSearchButton.addEventListener('click', async () => {
             const ad = customerNameInput.value.trim();
             const kod = customerCodeInput.value.trim();
             const fin = customerFinInput.value.trim();
             const telefon = customerPhoneInput.value.trim();
-
             if (!ad && !kod && !fin && !telefon) {
                 customerSearchMessage.textContent = 'Axtarış üçün ən azı bir xananı doldurun.';
                 customerSearchMessage.style.display = 'block';
                 return;
             }
-
             customerSearchButton.disabled = true;
             customerSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gözləyin...';
             customerResultsTbody.innerHTML = '';
             customerSearchMessage.style.display = 'none';
-
             try {
                 const url = `${GAS_WEB_APP_URL}?action=searchCustomers&ad=${encodeURIComponent(ad)}&kod=${encodeURIComponent(kod)}&fin=${encodeURIComponent(fin)}&telefon=${encodeURIComponent(telefon)}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Server xətası: ' + response.statusText);
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     if (result.data && result.data.length > 0) {
                         displayCustomerResults(result.data);
@@ -535,7 +561,6 @@
             }
         });
         
-        // Axtarış nəticələrini (Müştərilər) cədvələ çəkir
         function displayCustomerResults(data) {
             customerResultsTbody.innerHTML = '';
             data.forEach(customer => {
@@ -546,17 +571,12 @@
                     <td>${customer.fin || '-'}</td>
                     <td>${customer.telefon || '-'}</td>
                     <td>${customer.cinsi || '-'}</td>
-                    <td>
-                        <button class="add-button" data-customer-json='${JSON.stringify(customer)}'>
-                            <i class="fas fa-check"></i> Seç
-                        </button>
-                    </td>
+                    <td><button class="add-button" data-customer-json='${JSON.stringify(customer)}'><i class="fas fa-check"></i> Seç</button></td>
                 `;
                 customerResultsTbody.appendChild(row);
             });
         }
         
-        // Axtarış cədvəlində "Seç" düyməsinə klikləmək
         customerResultsTbody.addEventListener('click', (event) => {
              if (event.target.classList.contains('add-button') || event.target.closest('.add-button')) {
                 const button = event.target.closest('.add-button');
@@ -565,49 +585,40 @@
              }
         });
 
-        // "Yeni Müştəri Yarat" düyməsi (Axtarış blokundakı)
         showNewCustomerButton.addEventListener('click', () => {
-            customerSearchWrapper.style.display = 'none'; // Axtarış blokunu gizlət
-            newCustomerForm.style.display = 'block'; // Yeni müştəri formasını göstər
+            customerSearchWrapper.style.display = 'none'; 
+            newCustomerForm.style.display = 'block'; 
         });
         
-        // "Ləğv et" düyməsi (Yeni müştəri formasındakı)
         cancelNewCustomerButton.addEventListener('click', () => {
-            customerSearchWrapper.style.display = 'block'; // Axtarış blokunu göstər
-            newCustomerForm.style.display = 'none'; // Yeni müştəri formasını gizlət
-            newCustomerMessage.style.display = 'none'; // Mesajı gizlət
+            customerSearchWrapper.style.display = 'block'; 
+            newCustomerForm.style.display = 'none'; 
+            newCustomerMessage.style.display = 'none'; 
         });
 
-        // "Yarat və Seç" düyməsi (Yeni müştəri formasındakı)
         createCustomerButton.addEventListener('click', async () => {
             const ad = document.getElementById('new-customer-name').value.trim();
             const telefon = document.getElementById('new-customer-phone').value.trim();
             const cinsi = document.getElementById('new-customer-gender').value;
             const fin = document.getElementById('new-customer-fin').value.trim();
-
             if (!ad || !telefon || !cinsi) {
                 newCustomerMessage.textContent = 'Ad/Soyad, Telefon və Cinsi xanaları mütləqdir.';
                 newCustomerMessage.style.display = 'block';
                 return;
             }
-
             createCustomerButton.disabled = true;
             createCustomerButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yaradılır...';
             newCustomerMessage.style.display = 'none';
-
             try {
                 const payload = { ad, telefon, cinsi, fin };
                 const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
-                    // Diqqət: Code.gs-dəki doPost-a uyğun olaraq
                     body: JSON.stringify({ action: 'addNewCustomer', payload: payload })
                 });
                 const result = await response.json();
-
                 if (result.status === 'success') {
-                    // Müştəri yaradıldı, onu seçirik
                     selectCustomer(result.data);
                     showToast(`Yeni müştəri "${result.data.ad}" yaradıldı!`);
                 } else {
@@ -622,31 +633,150 @@
             }
         });
 
-        // Müştərini seçən əsas funksiya
         function selectCustomer(customer) {
             selectedCustomer = customer; 
             selectedCustomerNameSpan.textContent = `${customer.ad} (Kod: ${customer.kod})`;
             selectedCustomerInfo.style.display = 'block';
-            
-            customerFormsWrapper.style.display = 'none'; // Həm axtarışı, həm yeni formanı gizlət
+            customerFormsWrapper.style.display = 'none'; 
         }
 
-        // "Dəyiş" düyməsi (seçimi ləğv etmək)
         changeCustomerButton.addEventListener('click', () => {
             selectedCustomer = null; 
             selectedCustomerInfo.style.display = 'none';
-            
-            customerFormsWrapper.style.display = 'block'; // Bütün formaları göstər
-            customerSearchWrapper.style.display = 'block'; // Axtarışı göstər
-            newCustomerForm.style.display = 'none'; // Yeni formanı gizlət
+            customerFormsWrapper.style.display = 'block'; 
+            customerSearchWrapper.style.display = 'block'; 
+            newCustomerForm.style.display = 'none'; 
             customerResultsWrapper.style.display = 'none';
             customerSearchMessage.style.display = 'none';
         });
 
         // ===========================================
-        // ===== 4. SATIŞI TAMAMLAMA MƏNTİQİ =====
+        // ===== YENİ: 4. SATIŞI TAMAMLAMA MƏNTİQİ =====
         // ===========================================
-        // (Növbəti addımda bura kod yazacağıq)
+        const completeSaleButton = document.getElementById('complete-sale-button');
+        const paymentMethodSelect = document.getElementById('payment-method');
+        const receiptModal = document.getElementById('receipt-modal');
+        const closeReceiptButton = document.getElementById('close-receipt-button');
+        const printReceiptButton = document.getElementById('print-receipt-button');
+
+        completeSaleButton.addEventListener('click', async () => {
+            // 1. Yoxlamalar
+            if (salesCart.length === 0) {
+                showToast('Satış üçün səbət boşdur!', true);
+                return;
+            }
+            if (selectedCustomer === null) {
+                showToast('Satış üçün müştəri seçilməyib!', true);
+                return;
+            }
+
+            // Düyməni deaktiv et
+            completeSaleButton.disabled = true;
+            completeSaleButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tamamlanır...';
+
+            try {
+                // 2. Payload-ı hazırla
+                const payload = {
+                    customerKod: selectedCustomer.kod,
+                    paymentMethod: paymentMethodSelect.value,
+                    items: salesCart // Səbətdəki bütün məhsullar
+                };
+                
+                // 3. Backend-ə göndər
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'recordCashSale', payload: payload })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // 4. Uğurlu olarsa, qəbzi göstər və formu təmizlə
+                    showToast('Satış uğurla tamamlandı!');
+                    generateReceipt(result.saleId, selectedCustomer, salesCart, paymentMethodSelect.value);
+                    resetSaleForm();
+                } else {
+                    // Backend-dən gələn xəta (məs, stokda yoxdur)
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                // Ümumi xəta
+                showToast(error.message, true);
+            } finally {
+                // Düyməni bərpa et
+                completeSaleButton.disabled = false;
+                completeSaleButton.innerHTML = '<i class="fas fa-check"></i> Satışı Tamamla';
+            }
+        });
+        
+        // Qəbz (Çek) yaradan funksiya
+        function generateReceipt(saleId, customer, items, paymentMethod) {
+            document.getElementById('receipt-details').innerHTML = `
+                <p><strong>Satış ID:</strong> ${saleId}</p>
+                <p><strong>Tarix:</strong> ${new Date().toLocaleString('az-AZ')}</p>
+                <p><strong>Müştəri:</strong> ${customer.ad} (Kod: ${customer.kod})</p>
+                <p><strong>Ödəniş növü:</strong> ${paymentMethod}</p>
+            `;
+            
+            const itemsTbody = document.getElementById('receipt-items');
+            itemsTbody.innerHTML = '';
+            let totalAmount = 0;
+            
+            items.forEach(item => {
+                const total = item.say * item.qiymet;
+                totalAmount += total;
+                itemsTbody.innerHTML += `
+                    <tr>
+                        <td>${item.ad}</td>
+                        <td>${item.say}</td>
+                        <td>${total.toFixed(2)} AZN</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('receipt-total').innerHTML = `
+                <tr>
+                    <td colspan="2">YEKUN MƏBLƏĞ:</td>
+                    <td>${totalAmount.toFixed(2)} AZN</td>
+                </tr>
+            `;
+            
+            receiptModal.style.display = 'flex'; // Modalı göstər
+        }
+
+        // Qəbz pəncərəsini bağlamaq
+        closeReceiptButton.addEventListener('click', () => {
+            receiptModal.style.display = 'none';
+        });
+        
+        // Qəbzi çap etmək
+        printReceiptButton.addEventListener('click', () => {
+            window.print(); // Brauzerin çap pəncərəsini açır
+        });
+
+        // Satışdan sonra səhifəni sıfırlayır
+        function resetSaleForm() {
+            // Yaddaşı təmizlə
+            salesCart = [];
+            selectedCustomer = null;
+            
+            // Səbəti təmizlə
+            renderCart();
+            
+            // Axtarışları təmizlə
+            productCodeInput.value = '';
+            productNameInput.value = '';
+            productResultsWrapper.style.display = 'none';
+            
+            // Müştəri blokunu sıfırla
+            changeCustomerButton.click(); // "Dəyiş" düyməsini simulyasiya edirik
+            customerNameInput.value = '';
+            customerCodeInput.value = '';
+            customerFinInput.value = '';
+            customerPhoneInput.value = '';
+        }
+
     </script>
 </body>
 </html>
