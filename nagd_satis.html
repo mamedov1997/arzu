@@ -24,9 +24,7 @@
         .background-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background-gradient); background-size: 400% 400%; animation: gradientShift 15s ease infinite; z-index: -100; }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* =========================================== */
-        /* ===== ƏSAS SƏHİFƏ (Struktur) ===== */
-        /* =========================================== */
+        /* ƏSAS SƏHİFƏ STRUKTURU */
         .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: var(--glass-bg); backdrop-filter: blur(15px); border-right: 1px solid var(--border-color); box-shadow: 5px 0 20px rgba(0,0,0,0.1); z-index: 10; display: flex; flex-direction: column; }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .sidebar-header h2 { font-size: 22px; font-weight: 500; }
@@ -76,6 +74,31 @@
         .finalize-section .form-group { min-width: 200px; }
         .complete-sale-button { padding: 15px 40px; font-size: 18px; font-weight: bold; background: var(--success-color); color: #0f2027; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
         .complete-sale-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(81, 255, 168, 0.3); }
+
+        /* ----- YENİ STİLLƏR (SƏBƏT ÜÇÜN) ----- */
+        .results-table td input.cart-quantity-input {
+            width: 70px;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+            background: var(--glass-bg-hover);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px;
+        }
+        
+        .remove-button {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .remove-button:hover {
+            transform: scale(1.2);
+        }
+        /* ----- YENİ STİLLƏRİN SONU ----- */
 
     </style>
     </head>
@@ -142,10 +165,10 @@
                                 <th>Ad</th>
                                 <th>Stok</th>
                                 <th>Qiymət (AZN)</th>
-                                <th></th> </tr>
+                                <th></th>
+                            </tr>
                         </thead>
-                        <tbody id="product-results-tbody">
-                            </tbody>
+                        <tbody id="product-results-tbody"></tbody>
                     </table>
                 </div>
                 <p class="search-message" id="product-search-message"></p>
@@ -162,7 +185,8 @@
                                 <th>Say</th>
                                 <th>Qiymət (AZN)</th>
                                 <th>Cəm (AZN)</th>
-                                <th></th> </tr>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody id="cart-tbody">
                             <tr><td colspan="6" style="text-align: center; color: var(--text-color-muted);">Səbət boşdur</td></tr>
@@ -197,14 +221,13 @@
                                 <th>Kod</th>
                                 <th>Ad/Soyad/Ata</th>
                                 <th>Fin</th>
-                                <th></th> </tr>
+                                <th></th>
+                            </tr>
                         </thead>
-                        <tbody id="customer-results-tbody">
-                            </tbody>
+                        <tbody id="customer-results-tbody"></tbody>
                     </table>
                 </div>
                 <p class="search-message" id="customer-search-message"></p>
-                
                 <div id="selected-customer-info" style="display: none; margin-top: 20px;">
                     <strong>Seçilmiş müştəri:</strong> <span id="selected-customer-name"></span>
                 </div>
@@ -233,46 +256,38 @@
         // !!! ÇOX VACİB: ƏN SON YAYIMLADIĞINIZ (DEPLOY) URL-İ BURA YAPIŞDIRIN
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwy8ObW2MwIjidp1r0z8eD_u4LTQbQoiid391R1cnWHO5fRFvaMOWWnrleaMiJ1MbUTpQ/exec';
 
+        // ===== QLOBAL ELEMENTLƏR VƏ YADDAŞ (STATE) =====
+        let salesCart = []; // Səbəti yaddaşda saxlayan massiv
+        const cartTbody = document.getElementById('cart-tbody');
+        const productResultsTbody = document.getElementById('product-results-tbody');
+        
         // ===========================================
         // ===== 1. MƏHSUL AXTARIŞI MƏNTİQİ =====
         // ===========================================
-
-        // Axtarış bloku üçün elementləri seçirik
         const productSearchButton = document.getElementById('product-search-button');
         const productCodeInput = document.getElementById('product-code');
         const productNameInput = document.getElementById('product-name');
         const productResultsWrapper = document.getElementById('product-results-wrapper');
-        const productResultsTbody = document.getElementById('product-results-tbody');
         const productSearchMessage = document.getElementById('product-search-message');
 
-        // "Axtar" düyməsinə klikləmə hadisəsini izləyirik
         productSearchButton.addEventListener('click', async () => {
             const code = productCodeInput.value.trim();
             const name = productNameInput.value.trim();
-
             if (!code && !name) {
                 productSearchMessage.textContent = 'Axtarış üçün ən azı bir xananı doldurun.';
                 productSearchMessage.style.display = 'block';
                 productResultsWrapper.style.display = 'none';
                 return;
             }
-
             productSearchButton.disabled = true;
             productSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gözləyin...';
             productResultsTbody.innerHTML = ''; 
             productSearchMessage.style.display = 'none'; 
-
             try {
                 const url = `${GAS_WEB_APP_URL}?action=searchProducts&code=${encodeURIComponent(code)}&name=${encodeURIComponent(name)}`;
-                
                 const response = await fetch(url, { method: 'GET' });
-
-                if (!response.ok) {
-                    throw new Error('Server xətası: ' + response.statusText);
-                }
-
+                if (!response.ok) throw new Error('Server xətası: ' + response.statusText);
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     if (result.data && result.data.length > 0) {
                         displayProductResults(result.data);
@@ -285,7 +300,6 @@
                 } else {
                     throw new Error(result.message || 'Naməlum xəta baş verdi.');
                 }
-
             } catch (error) {
                 productSearchMessage.textContent = 'Xəta: ' + error.message;
                 productSearchMessage.style.display = 'block';
@@ -295,18 +309,11 @@
             }
         });
 
-        /**
-         * Məhsul axtarışının nəticələrini cədvələ əlavə edən köməkçi funksiya
-         */
         function displayProductResults(data) {
             productResultsTbody.innerHTML = '';
-            
             data.forEach(product => {
                 const row = document.createElement('tr');
-                
-                // Qiymətin "undefined" gəlməməsi üçün yoxlama (əvvəlki cavabdakı düzəlişə əsasən)
                 const price = product.qiymet !== undefined ? `${product.qiymet} AZN` : 'Qeyd olunmayıb';
-                
                 row.innerHTML = `
                     <td>${product.kod}</td>
                     <td>${product.ad}</td>
@@ -326,12 +333,144 @@
             });
         }
 
-
         // ===========================================
-        // ===== 2. SƏBƏTƏ ƏLAVƏ ETMƏ MƏNTİQİ =====
+        // ===== YENİ: 2. SƏBƏTƏ ƏLAVƏ ETMƏ MƏNTİQİ =====
         // ===========================================
-        // (Növbəti addımda bura kod yazacağıq)
 
+        // Axtarış cədvəlinə (statiq valideyn) klikləmə əlavə edirik (Event Delegation)
+        // Bu, dinamik yaranan "Əlavə et" düymələrini tutur
+        productResultsTbody.addEventListener('click', (event) => {
+            // Yoxlayırıq ki, kliklənən element "add-button" class-ına malikdirmi
+            if (event.target.classList.contains('add-button') || event.target.closest('.add-button')) {
+                const button = event.target.closest('.add-button');
+                
+                // Məhsulun məlumatlarını düymənin data- atributlarından götürürük
+                const productToAdd = {
+                    kod: button.dataset.kod,
+                    ad: button.dataset.ad,
+                    qiymet: parseFloat(button.dataset.qiymet),
+                    stok: parseInt(button.dataset.stok),
+                    say: 1 // Səbətə 1 ədəd əlavə edirik
+                };
+
+                // Məhsulu səbətə əlavə edən funksiyanı çağırırıq
+                addProductToCart(productToAdd);
+            }
+        });
+
+        /**
+         * Məhsulu 'salesCart' massivinə əlavə edir və səbəti yeniləyir.
+         */
+        function addProductToCart(product) {
+            // Yoxlayırıq ki, bu məhsul (koduna görə) artıq səbətdə varmı
+            const existingItem = salesCart.find(item => item.kod === product.kod);
+
+            if (existingItem) {
+                // Əgər varsa, sadəcə sayını artırırıq
+                
+                // Stok yoxlaması
+                if (existingItem.say + 1 > existingItem.stok) {
+                    alert(`Stokda yalnız ${existingItem.stok} ədəd ${existingItem.ad} var. Daha çox əlavə edə bilməzsiniz.`);
+                    return; // Funksiyanı dayandırırıq
+                }
+                existingItem.say++;
+            } else {
+                // Əgər yoxdursa, yeni məhsul kimi massivə əlavə edirik
+                
+                // Stok yoxlaması
+                if (product.say > product.stok) {
+                    alert(`Stokda yalnız ${product.stok} ədəd ${product.ad} var.`);
+                    return; // Funksiyanı dayandırırıq
+                }
+                salesCart.push(product);
+            }
+
+            // Səbət massivi yeniləndikdən sonra, cədvəli yenidən çəkirik (render)
+            renderCart();
+        }
+
+        /**
+         * 'salesCart' massivinə əsasən "Satış Səbəti" cədvəlini yenidən qurur.
+         */
+        function renderCart() {
+            cartTbody.innerHTML = ''; // Səbəti təmizləyirik
+
+            if (salesCart.length === 0) {
+                // Səbət boşdursa, mesaj göstəririk
+                cartTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-color-muted);">Səbət boşdur</td></tr>';
+                return;
+            }
+
+            // Səbətdəki hər bir məhsul üçün cədvələ yeni sətir əlavə edirik
+            salesCart.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const total = item.say * item.qiymet;
+                
+                row.innerHTML = `
+                    <td>${item.kod}</td>
+                    <td>${item.ad}</td>
+                    <td>
+                        <input type="number" class="cart-quantity-input" value="${item.say}" min="1" max="${item.stok}" data-index="${index}">
+                    </td>
+                    <td>${item.qiymet.toFixed(2)} AZN</td>
+                    <td>${total.toFixed(2)} AZN</td>
+                    <td>
+                        <button class="remove-button" data-index="${index}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                cartTbody.appendChild(row);
+            });
+        }
+        
+        // Səbət cədvəlindəki dinamik düymələr üçün (Sil və Say dəyişmə)
+        cartTbody.addEventListener('click', (event) => {
+            // Əgər "Sil" düyməsi (remove-button) kliklənibsə
+            if (event.target.classList.contains('remove-button') || event.target.closest('.remove-button')) {
+                const button = event.target.closest('.remove-button');
+                const indexToRemove = parseInt(button.dataset.index);
+                removeCartItem(indexToRemove);
+            }
+        });
+
+        cartTbody.addEventListener('change', (event) => {
+            // Əgər "Say" xanası (cart-quantity-input) dəyişdirilibsə
+            if (event.target.classList.contains('cart-quantity-input')) {
+                const input = event.target;
+                const indexToUpdate = parseInt(input.dataset.index);
+                let newQuantity = parseInt(input.value);
+                const maxStok = parseInt(input.max);
+                
+                if (newQuantity > maxStok) {
+                    alert(`Stokda yalnız ${maxStok} ədəd var.`);
+                    newQuantity = maxStok; // Dəyəri maksimuma bərabər edirik
+                }
+                if (newQuantity < 1) {
+                    newQuantity = 1; // Dəyər 1-dən az ola bilməz
+                }
+                
+                updateCartQuantity(indexToUpdate, newQuantity);
+            }
+        });
+
+        /**
+         * Məhsulu səbətdən silir (index-ə görə)
+         */
+        function removeCartItem(index) {
+            salesCart.splice(index, 1); // Massivdən həmin elementi silirik
+            renderCart(); // Səbəti yenidən çəkirik
+        }
+
+        /**
+         * Səbətdəki məhsulun sayını dəyişir
+         */
+        function updateCartQuantity(index, newQuantity) {
+            if (salesCart[index]) {
+                salesCart[index].say = newQuantity;
+                renderCart(); // Səbəti yenidən çəkirik
+            }
+        }
 
         // ===========================================
         // ===== 3. MÜŞTƏRİ AXTARIŞI MƏNTİQİ =====
@@ -342,7 +481,6 @@
         // ===== 4. SATIŞI TAMAMLAMA MƏNTİQİ =====
         // ===========================================
         // (Növbəti addımda bura kod yazacağıq)
-
     </script>
 </body>
 </html>
