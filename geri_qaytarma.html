@@ -7,19 +7,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* ... (Bütün CSS stilləri əvvəlki cavabdakı kimi qalır, heç bir dəyişiklik yoxdur) ... */
-        :root { /* ... */ } * { /* ... */ } body { /* ... */ } .background-animation { /* ... */ } @keyframes gradientShift { /* ... */ }
-        .sidebar { /* ... */ } .sidebar-header { /* ... */ } .sidebar-header h2 { /* ... */ } .sidebar-header h2 i { /* ... */ } .sidebar-header a { /* ... */ } .sidebar-header a:hover { /* ... */ }
-        .menu-list { /* ... */ } .menu-list::-webkit-scrollbar { /* ... */ } .menu-list::-webkit-scrollbar-thumb { /* ... */ } .menu-list::-webkit-scrollbar-track { /* ... */ } .menu-item { /* ... */ } .menu-item a { /* ... */ } .menu-item a i { /* ... */ } .menu-item a span { /* ... */ } .menu-item a:hover { /* ... */ } .menu-item.active a { /* ... */ }
-        .main-content-wrapper { /* ... */ } #main-page .main-header { /* ... */ } #main-page .main-header h1 { /* ... */ } #main-page .logout-button { /* ... */ } #main-page .logout-button:hover { /* ... */ } #main-page .content-area { /* ... */ }
+        :root {
+            --sidebar-width: 300px;
+            --primary-color: #00aaff;
+            --background-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg-hover: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --text-color-muted: #bbbbbb;
+            --error-color: #ff6b6b;
+            --success-color: #51ffa8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--background-gradient); color: var(--text-color); overflow-x: hidden; }
+        .background-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background-gradient); background-size: 400% 400%; animation: gradientShift 15s ease infinite; z-index: -100; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        /* ƏSAS SƏHİFƏ STRUKTURU */
+        .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: var(--glass-bg); backdrop-filter: blur(15px); border-right: 1px solid var(--border-color); box-shadow: 5px 0 20px rgba(0,0,0,0.1); z-index: 10; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .sidebar-header h2 { font-size: 22px; font-weight: 500; }
+        .sidebar-header h2 i { margin-right: 10px; color: var(--primary-color); }
+        .sidebar-header a { text-decoration: none; color: var(--text-color); transition: color 0.3s ease; }
+        .sidebar-header a:hover { color: var(--primary-color); }
+        .menu-list { list-style: none; margin: 0; padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .menu-list::-webkit-scrollbar { width: 6px; } .menu-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; } .menu-list::-webkit-scrollbar-track { background: transparent; }
+        .menu-item { margin-bottom: 10px; }
+        .menu-item a { display: flex; align-items: center; padding: 14px 20px; text-decoration: none; color: var(--text-color-muted); border-radius: 8px; transition: all 0.3s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .menu-item a i { width: 20px; margin-right: 15px; font-size: 18px; flex-shrink: 0; }
+        .menu-item a span { font-size: 16px; font-weight: 400; }
+        .menu-item a:hover { background: var(--glass-bg-hover); color: var(--text-color); transform: translateX(5px); }
+        .menu-item.active a { background: var(--primary-color); color: var(--text-color); font-weight: 500; box-shadow: 0 5px 10px rgba(0, 170, 255, 0.3); }
+        .main-content-wrapper { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); padding: 0; }
+        #main-page .main-header { padding: 20px 40px; background: var(--glass-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 5; }
+        #main-page .main-header h1 { font-size: 24px; font-weight: 400; }
+        #main-page .logout-button { text-decoration: none; color: var(--text-color); background: var(--glass-bg-hover); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.3s ease; white-space: nowrap; }
+        #main-page .logout-button:hover { background: var(--error-color); color: var(--text-color); border-color: var(--error-color); }
+        #main-page .content-area { padding: 40px; }
         .content-block { background: var(--glass-bg-hover); backdrop-filter: blur(5px); padding: 30px; border-radius: 15px; border: 1px solid var(--border-color); animation: fadeIn 1s ease-out; margin-bottom: 30px; } @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         h3.block-title { font-size: 20px; font-weight: 500; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
-        .search-form { display: flex; /* Flex istifadə edək */ flex-wrap: wrap; gap: 20px; align-items: flex-end; }
-        .form-group { display: flex; flex-direction: column; flex-grow: 1; /* Input genişlənsin */ }
+        .search-form { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .form-group { display: flex; flex-direction: column; flex-grow: 1; }
         .form-group label { margin-bottom: 8px; font-size: 14px; color: var(--text-color-muted); }
         .form-group input { padding: 12px 15px; font-size: 16px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); transition: all 0.3s ease; }
         .form-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
-        .search-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--primary-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0; /* Düymə sıxılmasın */ }
+        .search-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--primary-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0; }
         .search-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4); }
         .search-button:disabled { background: var(--text-color-muted); cursor: not-allowed; }
         .results-table-wrapper { margin-top: 20px; overflow-x: auto; max-height: 400px; }
@@ -28,32 +61,13 @@
         .results-table th { background-color: var(--glass-bg-hover); font-size: 14px; text-transform: uppercase; color: var(--text-color-muted); position: sticky; top: 0; }
         .results-table tr:hover { background-color: var(--glass-bg-hover); }
         .search-message { margin-top: 20px; text-align: center; color: var(--text-color-muted); display: none; }
-        .toast-message { /* ... */ } .toast-message.show { /* ... */ } .toast-message.error { /* ... */ }
+        .toast-message { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: #0f2027; padding: 15px 25px; border-radius: 8px; z-index: 1001; font-weight: bold; opacity: 0; visibility: hidden; transition: all 0.3s ease; } .toast-message.show { opacity: 1; visibility: visible; top: 30px; } .toast-message.error { background-color: var(--error-color); color: var(--text-color); }
 
-        /* YENİ: Qaytarma Düyməsi Stili */
-        .return-button {
-            padding: 8px 15px;
-            font-size: 14px;
-            background: var(--error-color); /* Qırmızı rəng */
-            color: var(--text-color);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .return-button:hover {
-            opacity: 0.8;
-        }
-        .return-button:disabled {
-             background: var(--text-color-muted);
-             cursor: not-allowed;
-        }
-        .return-button.returned { /* Qaytarıldıqdan sonra */
-             background: var(--success-color);
-             color: #0f2027;
-             cursor: default;
-        }
+        /* QAYTARMA DÜYMƏSİ STİLİ */
+        .return-button { padding: 8px 15px; font-size: 14px; background: var(--error-color); color: var(--text-color); border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        .return-button:hover { opacity: 0.8; }
+        .return-button:disabled { background: var(--text-color-muted); cursor: not-allowed; }
+        .return-button.returned { background: var(--success-color); color: #0f2027; cursor: default; }
 
     </style>
     </head>
@@ -104,8 +118,7 @@
             
             <div class="content-block" id="sale-details-block" style="display: none;">
                 <h3 class="block-title">Satış Məlumatları</h3>
-                <div id="sale-customer-info" style="margin-bottom: 20px;">
-                    </div>
+                <div id="sale-customer-info" style="margin-bottom: 20px;"></div>
                 <div class="results-table-wrapper">
                     <table class="results-table">
                         <thead>
@@ -118,12 +131,10 @@
                                 <th>Ödəmə Növü</th>
                                 <th></th> </tr>
                         </thead>
-                        <tbody id="sale-items-tbody">
-                            </tbody>
+                        <tbody id="sale-items-tbody"></tbody>
                     </table>
                 </div>
             </div>
-            
         </main>
     </div>
 
@@ -138,7 +149,7 @@
         const saleDetailsBlock = document.getElementById('sale-details-block');
         const saleCustomerInfo = document.getElementById('sale-customer-info');
         const saleItemsTbody = document.getElementById('sale-items-tbody');
-        const toastMessage = document.getElementById('toast-message'); // Əvvəlki səhifədən
+        const toastMessage = document.getElementById('toast-message'); 
 
         // ===========================================
         // ===== BİLDİRİŞ (TOAST) FUNKSİYASI =====
@@ -159,18 +170,15 @@
                 saleSearchMessage.style.display = 'block';
                 return;
             }
-
             saleSearchButton.disabled = true;
             saleSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Axtarılır...';
             saleSearchMessage.style.display = 'none';
-            saleDetailsBlock.style.display = 'none'; // Köhnə nəticələri gizlət
-
+            saleDetailsBlock.style.display = 'none'; 
             try {
                 const url = `${GAS_WEB_APP_URL}?action=findSaleById&saleId=${encodeURIComponent(saleId)}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Server xətası: ' + response.statusText);
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     if (result.data && result.data.length > 0) {
                         displaySaleDetails(result.data);
@@ -179,9 +187,7 @@
                         saleSearchMessage.textContent = `"${saleId}" ID-li satış tapılmadı.`;
                         saleSearchMessage.style.display = 'block';
                     }
-                } else {
-                    throw new Error(result.message);
-                }
+                } else { throw new Error(result.message); }
             } catch (error) {
                 saleSearchMessage.textContent = 'Xəta: ' + error.message;
                 saleSearchMessage.style.display = 'block';
@@ -192,39 +198,14 @@
             }
         });
 
-        // Tapılan satış məlumatlarını göstərən funksiya
         function displaySaleDetails(saleItems) {
-            // Müştəri məlumatını göstər (ilk elementdən götürürük, çünki eyni satışdır)
             const firstItem = saleItems[0];
-            saleCustomerInfo.innerHTML = `
-                <p><strong>Müştəri:</strong> ${firstItem.musteriAd} (Kod: ${firstItem.musteriKod})</p>
-                <p><strong>Satış Tarixi:</strong> ${new Date(firstItem.tarix).toLocaleString('az-AZ')}</p>
-                <p><strong>Ödəmə Növü:</strong> ${firstItem.odemeNovu}</p>
-            `;
-
-            // Məhsulları cədvələ əlavə et
+            saleCustomerInfo.innerHTML = `<p><strong>Müştəri:</strong> ${firstItem.musteriAd} (Kod: ${firstItem.musteriKod})</p><p><strong>Satış Tarixi:</strong> ${new Date(firstItem.tarix).toLocaleString('az-AZ')}</p><p><strong>Ödəmə Növü:</strong> ${firstItem.odemeNovu}</p>`;
             saleItemsTbody.innerHTML = '';
             saleItems.forEach((item, index) => {
                 const row = document.createElement('tr');
-                // Tarixi formatlayaq (yalnız tarix)
                 const saleDateFormatted = new Date(item.tarix).toLocaleDateString('az-AZ');
-                
-                row.innerHTML = `
-                    <td>${item.mehsulKod}</td>
-                    <td>${item.mehsulAd}</td>
-                    <td>${item.say}</td>
-                    <td>${item.mebleg.toFixed(2)} AZN</td>
-                    <td>${saleDateFormatted}</td>
-                    <td>${item.odemeNovu}</td>
-                    <td>
-                        <button class="return-button" 
-                                data-product-kod="${item.mehsulKod}" 
-                                data-quantity="${item.say}"
-                                data-row-index="${index}"> 
-                            <i class="fas fa-undo"></i> Qaytar
-                        </button>
-                    </td>
-                `;
+                row.innerHTML = `<td>${item.mehsulKod}</td><td>${item.mehsulAd}</td><td>${item.say}</td><td>${item.mebleg.toFixed(2)} AZN</td><td>${saleDateFormatted}</td><td>${item.odemeNovu}</td><td><button class="return-button" data-product-kod="${item.mehsulKod}" data-quantity="${item.say}" data-row-index="${index}"><i class="fas fa-undo"></i> Qaytar</button></td>`;
                 saleItemsTbody.appendChild(row);
             });
         }
@@ -233,17 +214,13 @@
         // ===== QAYTARMA MƏNTİQİ =====
         // ===========================================
         saleItemsTbody.addEventListener('click', async (event) => {
-             // Əgər "Qaytar" düyməsi (return-button) kliklənibsə və hələ deaktiv edilməyibsə
              if ( (event.target.classList.contains('return-button') || event.target.closest('.return-button')) && !event.target.closest('.return-button').disabled) {
                 const button = event.target.closest('.return-button');
                 const productKod = button.dataset.productKod;
                 const quantity = button.dataset.quantity;
-                const rowIndex = button.dataset.rowIndex; // Hansı düymənin basıldığını bilmək üçün
+                const rowIndex = button.dataset.rowIndex; 
 
-                // Təsdiq soruşaq
-                if (!confirm(`"${productKod}" kodlu məhsuldan ${quantity} ədəd stoka geri qaytarılsın?`)) {
-                    return; // İstifadəçi ləğv etdi
-                }
+                if (!confirm(`"${productKod}" kodlu məhsuldan ${quantity} ədəd stoka geri qaytarılsın?`)) return; 
 
                 button.disabled = true;
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Qaytarılır...';
@@ -259,16 +236,12 @@
 
                     if (result.status === 'success') {
                         showToast(result.message);
-                        // Düyməni dəyişdirib deaktiv edək
                         button.innerHTML = '<i class="fas fa-check"></i> Qaytarıldı';
                         button.classList.add('returned'); 
-                        // button.disabled = true; // Onsuz da yuxarıda disable etmişdik
-                    } else {
-                        throw new Error(result.message);
-                    }
+                    } else { throw new Error(result.message); }
                 } catch (error) {
                     showToast('Qaytarma zamanı xəta: ' + error.message, true);
-                    button.disabled = false; // Xəta olarsa düyməni bərpa et
+                    button.disabled = false; 
                     button.innerHTML = '<i class="fas fa-undo"></i> Qaytar';
                 }
              }
