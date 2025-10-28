@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Qaytarma</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 300px;
+            --primary-color: #00aaff;
+            --background-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg-hover: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --text-color-muted: #bbbbbb;
+            --error-color: #ff6b6b;
+            --success-color: #51ffa8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--background-gradient); color: var(--text-color); overflow-x: hidden; }
+        .background-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background-gradient); background-size: 400% 400%; animation: gradientShift 15s ease infinite; z-index: -100; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        /* ƏSAS SƏHİFƏ STRUKTURU */
+        .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: var(--glass-bg); backdrop-filter: blur(15px); border-right: 1px solid var(--border-color); box-shadow: 5px 0 20px rgba(0,0,0,0.1); z-index: 10; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .sidebar-header h2 { font-size: 22px; font-weight: 500; }
+        .sidebar-header h2 i { margin-right: 10px; color: var(--primary-color); }
+        .sidebar-header a { text-decoration: none; color: var(--text-color); transition: color 0.3s ease; }
+        .sidebar-header a:hover { color: var(--primary-color); }
+        .menu-list { list-style: none; margin: 0; padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .menu-list::-webkit-scrollbar { width: 6px; } .menu-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; } .menu-list::-webkit-scrollbar-track { background: transparent; }
+        .menu-item { margin-bottom: 10px; }
+        .menu-item a { display: flex; align-items: center; padding: 14px 20px; text-decoration: none; color: var(--text-color-muted); border-radius: 8px; transition: all 0.3s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .menu-item a i { width: 20px; margin-right: 15px; font-size: 18px; flex-shrink: 0; }
+        .menu-item a span { font-size: 16px; font-weight: 400; }
+        .menu-item a:hover { background: var(--glass-bg-hover); color: var(--text-color); transform: translateX(5px); }
+        .menu-item.active a { background: var(--primary-color); color: var(--text-color); font-weight: 500; box-shadow: 0 5px 10px rgba(0, 170, 255, 0.3); }
+        .main-content-wrapper { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); padding: 0; }
+        #main-page .main-header { padding: 20px 40px; background: var(--glass-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 5; }
+        #main-page .main-header h1 { font-size: 24px; font-weight: 400; }
+        #main-page .logout-button { text-decoration: none; color: var(--text-color); background: var(--glass-bg-hover); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.3s ease; white-space: nowrap; }
+        #main-page .logout-button:hover { background: var(--error-color); color: var(--text-color); border-color: var(--error-color); }
+        #main-page .content-area { padding: 40px; }
+        .content-block { background: var(--glass-bg-hover); backdrop-filter: blur(5px); padding: 30px; border-radius: 15px; border: 1px solid var(--border-color); animation: fadeIn 1s ease-out; margin-bottom: 30px; } @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        h3.block-title { font-size: 20px; font-weight: 500; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        .search-form { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .form-group { display: flex; flex-direction: column; flex-grow: 1; }
+        .form-group label { margin-bottom: 8px; font-size: 14px; color: var(--text-color-muted); }
+        .form-group input { padding: 12px 15px; font-size: 16px; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); transition: all 0.3s ease; }
+        .form-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
+        .search-button { padding: 12px 25px; font-size: 16px; font-weight: bold; background: var(--primary-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0; }
+        .search-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4); }
+        .search-button:disabled { background: var(--text-color-muted); cursor: not-allowed; }
+        .results-table-wrapper { margin-top: 20px; overflow-x: auto; max-height: 400px; }
+        .results-table { width: 100%; border-collapse: collapse; }
+        .results-table th, .results-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        .results-table th { background-color: var(--glass-bg-hover); font-size: 14px; text-transform: uppercase; color: var(--text-color-muted); position: sticky; top: 0; }
+        .results-table tr:hover { background-color: var(--glass-bg-hover); }
+        .search-message { margin-top: 20px; text-align: center; color: var(--text-color-muted); display: none; }
+        .toast-message { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: #0f2027; padding: 15px 25px; border-radius: 8px; z-index: 1001; font-weight: bold; opacity: 0; visibility: hidden; transition: all 0.3s ease; } .toast-message.show { opacity: 1; visibility: visible; top: 30px; } .toast-message.error { background-color: var(--error-color); color: var(--text-color); }
+
+        /* QAYTARMA DÜYMƏSİ VƏ STATUS STİLİ */
+        .return-button { padding: 8px 15px; font-size: 14px; background: var(--error-color); color: var(--text-color); border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        .return-button:hover:not(:disabled) { opacity: 0.8; } 
+        .return-button:disabled { background: var(--text-color-muted); cursor: not-allowed; opacity: 0.6; } 
+        .return-button.returned { background: var(--success-color); color: #0f2027; cursor: default; }
+        .status-returned { color: var(--success-color); font-weight: bold; }
+    </style>
+    </head>
+
+<body id="main-page">
+    
+    <div id="toast-message" class="toast-message"></div>
+    <div class="background-animation"></div>
+
+    <aside class="sidebar">
+         <div class="sidebar-header"><a href="main.html"> <h2><i class="fas fa-store"></i> Məmmədov</h2> </a></div>
+        <ul class="menu-list">
+            <li class="menu-item"> <a href="mehsullar.html"> <i class="fas fa-boxes-stacked"></i> <span>Məhsullar üzrə məlumat</span> </a> </li>
+            <li class="menu-item"> <a href="nagd_satis.html"> <i class="fas fa-cash-register"></i> <span>Nağd satış</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-credit-card"></i> <span>Kredit satış</span> </a> </li>
+            <li class="menu-item active"> <a href="geri_qaytarma.html"> <i class="fas fa-undo"></i> <span>Geri qaytarma</span> </a> </li> <li class="menu-item"> <a href="#"> <i class="fas fa-wallet"></i> <span>Kassa mədaxil</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-calendar-check"></i> <span>Kassa gün sonu</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-truck-ramp-box"></i> <span>Mağaza məhsul təhvil</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-plus"></i> <span>Yeni müştəri</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-check"></i> <span>Müştəri analizi</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-chart-bar"></i> <span>Satış hesabatı</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-file-invoice-dollar"></i> <span>Kassa hesabatı</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-shield"></i> <span>Admin panel</span> </a> </li>
+        </ul>
+    </aside>
+
+    <div class="main-content-wrapper">
+        <header class="main-header">
+            <h1>Geri Qaytarma</h1>
+            <a href="index.html" class="logout-button"> <i class="fas fa-sign-out-alt"></i> Çıxış </a>
+        </header>
+
+        <main class="content-area">
+            
+            <div class="content-block" id="sale-search-block">
+                <h3 class="block-title">Satış ID-sinə görə Axtarış</h3>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="sale-id">Satış ID</label>
+                        <input type="text" id="sale-id" placeholder="Məsələn: S-1001">
+                    </div>
+                    <button id="sale-search-button" class="search-button">
+                        <i class="fas fa-search"></i> Axtar
+                    </button>
+                </div>
+                <p class="search-message" id="sale-search-message"></p>
+            </div>
+            
+            <div class="content-block" id="sale-details-block" style="display: none;">
+                <h3 class="block-title">Satış Məlumatları</h3>
+                <div id="sale-customer-info" style="margin-bottom: 20px;"></div>
+                <div class="results-table-wrapper">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Məhsul Kodu</th>
+                                <th>Məhsul Adı</th>
+                                <th>Say</th>
+                                <th>Məbləğ (AZN)</th>
+                                <th>Satış Tarixi</th>
+                                <th>Ödəmə Növü</th>
+                                <th>Status</th> 
+                                <th></th> 
+                            </tr>
+                        </thead>
+                        <tbody id="sale-items-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // !!! ÇOX VACİB: ƏN SON YAYIMLADIĞINIZ URL-İ BURA YAPIŞDIRIN
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRNee-BXzi5MnLVU7x3-ntqvd6JZPbmFpW8Zj9qVHuOxrC9H6Unhu7CIAwcLfvDHartw/exec';
+
+        // ===== QLOBAL ELEMENT SEÇİMLƏRİ =====
+        const saleIdInput = document.getElementById('sale-id');
+        const saleSearchButton = document.getElementById('sale-search-button');
+        const saleSearchMessage = document.getElementById('sale-search-message');
+        const saleDetailsBlock = document.getElementById('sale-details-block');
+        const saleCustomerInfo = document.getElementById('sale-customer-info');
+        const saleItemsTbody = document.getElementById('sale-items-tbody');
+        const toastMessage = document.getElementById('toast-message'); 
+
+        // ===== BİLDİRİŞ (TOAST) FUNKSİYASI =====
+        function showToast(message, isError = false) { /* ... (kod eynidir) ... */ }
+        function showToast(message, isError = false) {
+            toastMessage.textContent = message;
+            toastMessage.className = isError ? 'toast-message show error' : 'toast-message show';
+            setTimeout(() => { toastMessage.classList.remove('show'); }, 3000); 
+        }
+
+
+        // ===== SATIŞ AXTARIŞI MƏNTİQİ =====
+        saleSearchButton.addEventListener('click', async () => { /* ... (kod eynidir) ... */ });
+         saleSearchButton.addEventListener('click', async () => {
+            const saleId = saleIdInput.value.trim();
+            if (!saleId) { saleSearchMessage.textContent = 'Axtarış üçün Satış ID daxil edin.'; saleSearchMessage.style.display = 'block'; return; }
+            saleSearchButton.disabled = true; saleSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Axtarılır...'; saleSearchMessage.style.display = 'none'; saleDetailsBlock.style.display = 'none'; 
+            try {
+                const url = `${GAS_WEB_APP_URL}?action=findSaleById&saleId=${encodeURIComponent(saleId)}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Server xətası: ' + response.statusText);
+                const result = await response.json();
+                if (result.status === 'success') {
+                    if (result.data && result.data.length > 0) { displaySaleDetails(result.data); saleDetailsBlock.style.display = 'block'; } 
+                    else { saleSearchMessage.textContent = `"${saleId}" ID-li satış tapılmadı.`; saleSearchMessage.style.display = 'block'; }
+                } else { throw new Error(result.message); }
+            } catch (error) { saleSearchMessage.textContent = 'Xəta: ' + error.message; saleSearchMessage.style.display = 'block'; showToast('Axtarış zamanı xəta: ' + error.message, true); } 
+            finally { saleSearchButton.disabled = false; saleSearchButton.innerHTML = '<i class="fas fa-search"></i> Axtar'; }
+        });
+
+        // ===== SATIŞ MƏLUMATLARINI GÖSTƏRMƏ FUNKSİYASI (YENİLƏNİB) =====
+        function displaySaleDetails(saleItems) { /* ... (kod eynidir) ... */ }
+         function displaySaleDetails(saleItems) {
+            const firstItem = saleItems[0];
+            saleCustomerInfo.innerHTML = `<p><strong>Müştəri:</strong> ${firstItem.musteriAd} (Kod: ${firstItem.musteriKod})</p><p><strong>Satış Tarixi:</strong> ${new Date(firstItem.tarix).toLocaleString('az-AZ')}</p><p><strong>Ödəmə Növü:</strong> ${firstItem.odemeNovu}</p>`;
+            saleItemsTbody.innerHTML = '';
+            saleItems.forEach((item) => { 
+                const row = document.createElement('tr');
+                const saleDateFormatted = new Date(item.tarix).toLocaleDateString('az-AZ');
+                const isReturned = item.qaytarilmaStatusu === 'Qaytarıldı';
+                const statusHtml = isReturned ? '<span class="status-returned">Qaytarıldı</span>' : 'Aktiv';
+                const buttonHtml = `<button class="return-button ${isReturned ? 'returned' : ''}" data-product-kod="${item.mehsulKod}" data-quantity="${item.say}" data-row-index-in-sheet="${item.rowIndexInSalesSheet}" ${isReturned ? 'disabled' : ''}> ${isReturned ? '<i class="fas fa-check"></i> Qaytarıldı' : '<i class="fas fa-undo"></i> Qaytar'} </button>`;
+                row.innerHTML = `<td>${item.mehsulKod}</td><td>${item.mehsulAd}</td><td>${item.say}</td><td>${item.mebleg.toFixed(2)} AZN</td><td>${saleDateFormatted}</td><td>${item.odemeNovu}</td><td>${statusHtml}</td><td>${buttonHtml}</td>`;
+                saleItemsTbody.appendChild(row);
+            });
+        }
+        
+        // ===== QAYTARMA MƏNTİQİ (YENİLƏNİB) =====
+        saleItemsTbody.addEventListener('click', async (event) => { /* ... (kod eynidir) ... */ });
+         saleItemsTbody.addEventListener('click', async (event) => {
+             const button = event.target.closest('.return-button'); 
+             if (!button || button.disabled) return; 
+             const productKod = button.dataset.productKod;
+             const quantity = button.dataset.quantity;
+             const rowIndexInSalesSheet = button.dataset.rowIndexInSheet; 
+             if (!confirm(`"${productKod}" kodlu məhsuldan ${quantity} ədəd stoka geri qaytarılsın?`)) return; 
+             button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Qaytarılır...';
+             try {
+                 const payload = { productKod: productKod, quantity: quantity, rowIndexInSalesSheet: rowIndexInSalesSheet };
+                 const response = await fetch(GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'processReturn', payload: payload }) });
+                 const result = await response.json();
+                 if (result.status === 'success') {
+                     showToast(result.message);
+                     button.innerHTML = '<i class="fas fa-check"></i> Qaytarıldı'; button.classList.add('returned'); 
+                     const statusCell = button.closest('tr').cells[6]; 
+                     statusCell.innerHTML = '<span class="status-returned">Qaytarıldı</span>';
+                 } else { throw new Error(result.message); }
+             } catch (error) { showToast('Qaytarma zamanı xəta: ' + error.message, true); button.disabled = false; button.innerHTML = '<i class="fas fa-undo"></i> Qaytar'; }
+        });
+    </script>
+</body>
+</html>
