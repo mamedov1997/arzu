@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = loginButton.querySelector('.loader');
 
     // MÜTLƏQ YOXLAYIN: BU URL SİZİN TEST EDİB "SALAM..." GÖRDÜYÜNÜZ URL İLƏ EYNİDİR?
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwy8ObW2MwIjidp1r0z8eD_u4LTQbQoiid391R1cnWHO5fRFvaMOWWnrleaMiJ1MbUTpQ/exec';
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRNee-BXzi5MnLVU7x3-ntqvd6JZPbmFpW8Zj9qVHuOxrC9H6Unhu7CIAwcLfvDHartw/exec';
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
