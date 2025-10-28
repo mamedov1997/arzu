@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Qaytarma</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* ... (Bütün CSS stilləri əvvəlki kimi qalır) ... */
+         :root { /* ... */ } * { /* ... */ } body { /* ... */ } .background-animation { /* ... */ } @keyframes gradientShift { /* ... */ }
+        .sidebar { /* ... */ } .sidebar-header { /* ... */ } /* ... (menyular) ... */ .main-content-wrapper { /* ... */ } #main-page .main-header { /* ... */ } /* ... (header) ... */ #main-page .content-area { /* ... */ } 
+        .content-block { /* ... */ } @keyframes fadeIn { /* ... */ } h3.block-title { /* ... */ } 
+        .search-form { /* ... */ } .form-group { /* ... */ } .form-group label { /* ... */ } .form-group input { /* ... */ } .form-group input:focus { /* ... */ }
+        .search-button { /* ... */ } .search-button:hover { /* ... */ } .search-button:disabled { /* ... */ }
+        .results-table-wrapper { /* ... */ } .results-table { /* ... */ } .results-table th, .results-table td { /* ... */ } .results-table th { /* ... */ } .results-table tr:hover { /* ... */ }
+        .search-message { /* ... */ } .toast-message { /* ... */ } .toast-message.show { /* ... */ } .toast-message.error { /* ... */ }
+        .return-button { /* ... */ } .return-button:hover:not(:disabled) { /* ... */ } .return-button:disabled { /* ... */ } .return-button.returned { /* ... */ } .status-returned { /* ... */ }
+    </style>
+    </head>
+
+<body id="main-page">
+    
+    <div id="toast-message" class="toast-message"></div>
+    <div class="background-animation"></div>
+
+    <aside class="sidebar">
+         <div class="sidebar-header"><a href="main.html"> <h2><i class="fas fa-store"></i> Məmmədov</h2> </a></div>
+        <ul class="menu-list">
+            <li class="menu-item"> <a href="mehsullar.html"> <i class="fas fa-boxes-stacked"></i> <span>Məhsullar üzrə məlumat</span> </a> </li>
+            <li class="menu-item"> <a href="nagd_satis.html"> <i class="fas fa-cash-register"></i> <span>Nağd satış</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-credit-card"></i> <span>Kredit satış</span> </a> </li>
+            <li class="menu-item active"> <a href="geri_qaytarma.html"> <i class="fas fa-undo"></i> <span>Geri qaytarma</span> </a> </li> 
+            <li class="menu-item"> <a href="#"> <i class="fas fa-wallet"></i> <span>Kassa mədaxil</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-calendar-check"></i> <span>Kassa gün sonu</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-truck-ramp-box"></i> <span>Mağaza məhsul təhvil</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-plus"></i> <span>Yeni müştəri</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-check"></i> <span>Müştəri analizi</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-chart-bar"></i> <span>Satış hesabatı</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-file-invoice-dollar"></i> <span>Kassa hesabatı</span> </a> </li>
+            <li class="menu-item"> <a href="#"> <i class="fas fa-user-shield"></i> <span>Admin panel</span> </a> </li>
+        </ul>
+    </aside>
+
+    <div class="main-content-wrapper">
+        <header class="main-header">
+            <h1>Geri Qaytarma</h1>
+            <a href="index.html" class="logout-button"> <i class="fas fa-sign-out-alt"></i> Çıxış </a>
+        </header>
+
+        <main class="content-area">
+            
+            <div class="content-block" id="sale-search-block">
+                <h3 class="block-title">Satış ID-sinə görə Axtarış</h3>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="sale-id">Satış ID</label>
+                        <input type="text" id="sale-id" placeholder="Məsələn: S-1001">
+                    </div>
+                    <button id="sale-search-button" class="search-button">
+                        <i class="fas fa-search"></i> Axtar
+                    </button>
+                </div>
+                <p class="search-message" id="sale-search-message"></p>
+            </div>
+            
+            <div class="content-block" id="sale-details-block" style="display: none;">
+                <h3 class="block-title">Satış Məlumatları</h3>
+                <div id="sale-customer-info" style="margin-bottom: 20px;">
+                    </div>
+                <div class="results-table-wrapper">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Məhsul Kodu</th>
+                                <th>Məhsul Adı</th>
+                                <th>Say</th>
+                                <th>Məbləğ (AZN)</th>
+                                <th>Satış Tarixi</th>
+                                <th>Ödəmə Növü</th>
+                                <th>Status</th> 
+                                <th></th> 
+                            </tr>
+                        </thead>
+                        <tbody id="sale-items-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // !!! ÇOX VACİB: ADDIM 2-DƏ ALDIĞINIZ ƏN YENİ URL-İ BURA YAPIŞDIRIN
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRNee-BXzi5MnLVU7x3-ntqvd6JZPbmFpW8Zj9qVHuOxrC9H6Unhu7CIAwcLfvDHartw/exec';
+
+        // ===== QLOBAL ELEMENT SEÇİMLƏRİ =====
+        const saleIdInput = document.getElementById('sale-id');
+        const saleSearchButton = document.getElementById('sale-search-button');
+        const saleSearchMessage = document.getElementById('sale-search-message');
+        const saleDetailsBlock = document.getElementById('sale-details-block');
+        const saleCustomerInfo = document.getElementById('sale-customer-info');
+        const saleItemsTbody = document.getElementById('sale-items-tbody');
+        const toastMessage = document.getElementById('toast-message'); 
+
+        // ===== BİLDİRİŞ (TOAST) FUNKSİYASI =====
+        function showToast(message, isError = false) { /* ... (kod eynidir) ... */ }
+        function showToast(message, isError = false) { toastMessage.textContent = message; toastMessage.className = isError ? 'toast-message show error' : 'toast-message show'; setTimeout(() => { toastMessage.classList.remove('show'); }, 3000); }
+
+        // ===== SATIŞ AXTARIŞI MƏNTİQİ =====
+        saleSearchButton.addEventListener('click', async () => { /* ... (kod eynidir) ... */ });
+         saleSearchButton.addEventListener('click', async () => {
+            const saleId = saleIdInput.value.trim();
+            if (!saleId) { saleSearchMessage.textContent = 'Axtarış üçün Satış ID daxil edin.'; saleSearchMessage.style.display = 'block'; return; }
+            saleSearchButton.disabled = true; saleSearchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Axtarılır...'; saleSearchMessage.style.display = 'none'; saleDetailsBlock.style.display = 'none'; 
+            try {
+                const url = `${GAS_WEB_APP_URL}?action=findSaleById&saleId=${encodeURIComponent(saleId)}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Server xətası: ' + response.statusText);
+                const result = await response.json();
+                if (result.status === 'success') {
+                    if (result.data && result.data.length > 0) { displaySaleDetails(result.data); saleDetailsBlock.style.display = 'block'; } 
+                    else { saleSearchMessage.textContent = `"${saleId}" ID-li satış tapılmadı.`; saleSearchMessage.style.display = 'block'; }
+                } else { throw new Error(result.message); }
+            } catch (error) { saleSearchMessage.textContent = 'Xəta: ' + error.message; saleSearchMessage.style.display = 'block'; showToast('Axtarış zamanı xəta: ' + error.message, true); } 
+            finally { saleSearchButton.disabled = false; saleSearchButton.innerHTML = '<i class="fas fa-search"></i> Axtar'; }
+        });
+
+        // ===== SATIŞ MƏLUMATLARINI GÖSTƏRMƏ FUNKSİYASI (YENİLƏNİB - İLKİN ÖDƏNİŞ ƏLAVƏ EDİLDİ) =====
+        function displaySaleDetails(saleItems) {
+            const firstItem = saleItems[0];
+            
+            // Əsas məlumatları yazırıq
+            let customerInfoHtml = `
+                <p><strong>Müştəri:</strong> ${firstItem.musteriAd} (Kod: ${firstItem.musteriKod})</p>
+                <p><strong>Satış Tarixi:</strong> ${new Date(firstItem.tarix).toLocaleString('az-AZ')}</p>
+                <p><strong>Ödəmə Növü:</strong> ${firstItem.odemeNovu}</p>
+            `;
+            
+            // Əgər Kreditdirsə və İlkin Ödəniş varsa, onu da əlavə edirik
+            // (ilkinOdenis 0 olsa belə göstərək, çünki kredit olduğunu bildirir)
+            if (firstItem.odemeNovu === 'Kredit' && firstItem.ilkinOdenis !== undefined && firstItem.ilkinOdenis !== null) {
+                 // Dəyərin numeric olub olmadığını yoxlayaq
+                 const downPayment = parseFloat(firstItem.ilkinOdenis);
+                 customerInfoHtml += `<p style="color: var(--success-color);"><strong>İlkin Ödəniş:</strong> ${isNaN(downPayment) ? 'Qeyd olunmayıb' : downPayment.toFixed(2) + ' AZN'}</p>`;
+            }
+            
+            saleCustomerInfo.innerHTML = customerInfoHtml; // Yenilənmiş məlumatı bloka yazırıq
+
+            // Məhsulları cədvələ əlavə et (əvvəlki kimi)
+            saleItemsTbody.innerHTML = '';
+            saleItems.forEach((item) => { 
+                const row = document.createElement('tr');
+                const saleDateFormatted = new Date(item.tarix).toLocaleDateString('az-AZ');
+                const isReturned = item.qaytarilmaStatusu === 'Qaytarıldı';
+                const statusHtml = isReturned ? '<span class="status-returned">Qaytarıldı</span>' : 'Aktiv';
+                const buttonHtml = `<button class="return-button ${isReturned ? 'returned' : ''}" data-product-kod="${item.mehsulKod}" data-quantity="${item.say}" data-row-index-in-sheet="${item.rowIndexInSalesSheet}" ${isReturned ? 'disabled' : ''}> ${isReturned ? '<i class="fas fa-check"></i> Qaytarıldı' : '<i class="fas fa-undo"></i> Qaytar'} </button>`;
+                row.innerHTML = `<td>${item.mehsulKod}</td><td>${item.mehsulAd}</td><td>${item.say}</td><td>${item.mebleg.toFixed(2)} AZN</td><td>${saleDateFormatted}</td><td>${item.odemeNovu}</td><td>${statusHtml}</td><td>${buttonHtml}</td>`;
+                saleItemsTbody.appendChild(row);
+            });
+        }
+        
+        // ===== QAYTARMA MƏNTİQİ (Dəyişməz qalır) =====
+        saleItemsTbody.addEventListener('click', async (event) => { /* ... (kod eynidir) ... */ });
+         saleItemsTbody.addEventListener('click', async (event) => {
+             const button = event.target.closest('.return-button'); 
+             if (!button || button.disabled) return; 
+             const productKod = button.dataset.productKod;
+             const quantity = button.dataset.quantity;
+             const rowIndexInSalesSheet = button.dataset.rowIndexInSheet; 
+             if (!confirm(`"${productKod}" kodlu məhsuldan ${quantity} ədəd stoka geri qaytarılsın?`)) return; 
+             button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Qaytarılır...';
+             try {
+                 const payload = { productKod: productKod, quantity: quantity, rowIndexInSalesSheet: rowIndexInSalesSheet };
+                 const response = await fetch(GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'processReturn', payload: payload }) });
+                 const result = await response.json();
+                 if (result.status === 'success') {
+                     showToast(result.message);
+                     button.innerHTML = '<i class="fas fa-check"></i> Qaytarıldı'; button.classList.add('returned'); 
+                     const statusCell = button.closest('tr').cells[6]; 
+                     statusCell.innerHTML = '<span class="status-returned">Qaytarıldı</span>';
+                 } else { throw new Error(result.message); }
+             } catch (error) { showToast('Qaytarma zamanı xəta: ' + error.message, true); button.disabled = false; button.innerHTML = '<i class="fas fa-undo"></i> Qaytar'; }
+        });
+
+    </script>
+</body>
+</html>
