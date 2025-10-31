@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnteraktiv Cədvəl</title>
+    <style>
+        /* Səhifənin əsas stili */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Cədvəli əhatə edən konteyner */
+        .table-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            overflow-x: auto; /* Kiçik ekranlarda cədvəlin sürüşdürülməsi */
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Müasir cədvəl stili */
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Sərhədləri birləşdir */
+        }
+
+        /* Cədvəl xanaları (TD) */
+        td {
+            padding: 15px 18px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* Cədvəl sətirləri (alternativ rənglər) */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* İlk sətrin yuxarı künclərini yuvarlaqlaşdırmaq */
+        tbody tr:first-child td:first-child {
+            border-top-left-radius: 10px;
+        }
+        tbody tr:first-child td:last-child {
+            border-top-right-radius: 10px;
+        }
+
+
+        /* --- Animasiya və İnteraktivlik --- */
+
+        /* Sətirin üzərinə gəldikdə (Hover) animasiyası */
+        tbody tr:hover {
+            background-color: #ecf0f1;
+            transition: background-color 0.3s ease; /* Yumşaq keçid */
+        }
+
+        /* Bütün məlumat xanaları redaktə edilə bilər */
+        td {
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        /* Redaktə üçün xanaya klik etdikdə (Focus) animasiyası */
+        td[contenteditable="true"]:focus {
+            background-color: #fffde7; /* Vurğulamaq üçün sarı rəng */
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Mavi parıltı */
+            outline: none; /* Standart çərçivəni ləğv et */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="table-container">
+        <table>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">Mağazalar arası</td>
+                    <td contenteditable="true">Əmrah A.Rəsulov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">İOKİO</td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Paşa Ə.Məmmədov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Nömrə</td>
+                    <td contenteditable="true">051-205-50-11</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">RA - Ukrayna Dairəsi</td>
+                    <td contenteditable="true">Elman M.Yusibov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Kod</td>
+                    <td contenteditable="true">1394</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">RA - Masallı</td>
+                    <td contenteditable="true">Zahir Ə.Babayev</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Gəncə anbarı</td>
+                    <td contenteditable="true">Cəfər N.Əhmədov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Bəhruz F.Həsənov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - (seriaısz məhsullar)</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Ramal Həsənli</td>
+                    <td contenteditable="true">1185</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - 1</td>
+                    <td contenteditable="true">Yaqub Y.Yaqubov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Eltun Əhmədov</td>
+                    <td contenteditable="true">1494</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - 2</td>
+                    <td contenteditable="true">Sənan İ.Sadıqov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Orxan Hüseynov</td>
+                    <td contenteditable="true">1495</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - 3</td>
+                    <td contenteditable="true">Rəşad Y.Yaqubov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Nərmin Əzizova</td>
+                    <td contenteditable="true">1193</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - 4</td>
+                    <td contenteditable="true">Azər Ə.Mustafayev</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Sevinc Məmmədli</td>
+                    <td contenteditable="true">1530</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">AB - 5</td>
+                    <td contenteditable="true">Ümid D.Həsənbəyoov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Əfsanə Süleymanlı</td>
+                    <td contenteditable="true">1491</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Röyal B.Xanəliyev</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Cəmilə Xəlilova</td>
+                    <td contenteditable="true">1417</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Anbar Logistik</td>
+                    <td contenteditable="true">Emin S.Bayramov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Anjela Aliyeva</td>
+                    <td contenteditable="true">2902</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Samir A.Əliyev</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true">Servis(Rəqəmsal</td>
+                    <td contenteditable="true">2906</td>
+                </tr>
+                <tr>
+                    <d contenteditable="true">AB (Serialı)</td>
+                    <td contenteditable="true">Emin S.Bayramov</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
