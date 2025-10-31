@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müasir Məlumat Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #a855f7;
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #e2e8f0;
+            --border-color: rgba(148, 163, 184, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        /* Grid Styles */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* CSV-dəki 5 sütuna uyğun */
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .grid-cell {
+            background: var(--panel-bg);
+            padding: 1rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-cell:hover {
+            background: rgba(51, 65, 85, 0.8);
+            z-index: 1;
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .grid-cell.empty {
+            color: rgba(148, 163, 184, 0.4);
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+
+        .grid-header {
+            background: rgba(99, 102, 241, 0.1) !important;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: rgba(30, 41, 59, 0.95);
+            padding: 2rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal h3 {
+            margin-bottom: 1.5rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; scale: 0.98; }
+            to { opacity: 1; scale: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr); /* Mobildə 2 sütun */
+            }
+            body {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Məlumat Bazası</h1>
+        <div id="grid-container" class="data-grid">
+            </div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h3>Məlumatı Redaktə et</h3>
+            <div class="form-group">
+                <label class="form-label">Mövcud Məlumat</label>
+                <input type="text" id="cellValue" class="form-input" placeholder="Boş">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Əlavə Qeydlər</label>
+                <textarea id="cellNotes" class="form-input" rows="3" placeholder="Bu xana üçün xüsusi qeyd əlavə edin..."></textarea>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="closeModal()">Ləğv et</button>
+                <button class="btn btn-primary" onclick="saveData()">Yadda saxla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CSV-dən çıxarılan ilkin məlumatlar
+        let gridData = [
+            ["Mağazalar arası", "Əmrah A.Rəsulov", "", "İOKİO", ""],
+            ["", "Paşa Ə.Məmmədov", "", "Nömrə", "051-205-50-11"],
+            ["RA - Ukrayna Dairəsi", "Elman M.Yusibov", "", "Kod", "1394"],
+            ["RA - Masallı", "Zahir Ə.Babayev", "", "", ""],
+            ["Gəncə anbarı", "Cəfər N.Əhmədov", "", "", ""],
+            ["", "Bəhruz F.Həsənov", "", "", ""],
+            ["AB - (seriasız məhsullar)", "", "", "Ramal Həsənli", "1185"],
+            ["AB - 1", "Yaqub Y.Yaqubov", "", "Eltun Əhmədov", "1494"],
+            ["AB - 2", "Sənan İ.Sadıqov", "", "Orxan Hüseynov", "1495"],
+            ["AB - 3", "Rəşad Y.Yaqubov", "", "Nərmin Əzizova", "1193"],
+            ["AB - 4", "Azər Ə.Mustafayev", "", "Sevinc Məmmədli", "1530"],
+            ["AB - 5", "Ümid D.Həsənbəyov", "", "Əfsanə Süleymanlı", "1491"],
+            ["", "Röyal B.Xanəliyev", "", "Cəmilə Xəlilova", "1417"],
+            ["Anbar Logistik", "Emin S.Bayramov", "", "Anjela Aliyeva", "2902"],
+            ["", "Samir A.Əliyev", "", "Servis (Rəqəmsal)", "2906"],
+            ["AB (Serialı)", "Emin S.Bayramov", "", "", ""]
+        ];
+
+        // Hər xana üçün əlavə qeydləri saxlamaq üçün obyekt
+        let cellNotes = {};
+
+        let activeCell = { row: null, col: null };
+
+        function renderGrid() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+
+            gridData.forEach((row, rowIndex) => {
+                row.forEach((cellData, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.className = `grid-cell ${!cellData ? 'empty' : ''}`;
+                    
+                    // Məlumat varsa göstər, yoxsa "Boş" yazısı (vizual kömək üçün)
+                    cell.textContent = cellData || '---';
+                    
+                    // Əgər bu xana üçün qeyd varsa, kiçik bir işarə əlavə et
+                    if (cellNotes[`${rowIndex}-${colIndex}`]) {
+                        cell.style.borderBottom = '2px solid var(--secondary-color)';
+                    }
+
+                    // Animasiya gecikməsi əlavə et (sətirlər ardıcıl gəlsin)
+                    cell.style.animation = `fadeIn 0.5s ease-out ${rowIndex * 0.05}s backwards`;
+
+                    cell.onclick = () => openModal(rowIndex, colIndex);
+                    container.appendChild(cell);
+                });
+            });
+        }
+
+        function openModal(row, col) {
+            activeCell = { row, col };
+            const modal = document.getElementById('editModal');
+            const input = document.getElementById('cellValue');
+            const notes = document.getElementById('cellNotes');
+
+            input.value = gridData[row][col];
+            notes.value = cellNotes[`${row}-${col}`] || '';
+            
+            modal.classList.add('active');
+            input.focus();
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        function saveData() {
+            const newValue = document.getElementById('cellValue').value;
+            const newNotes = document.getElementById('cellNotes').value;
+
+            // Məlumatları yenilə
+            gridData[activeCell.row][activeCell.col] = newValue;
+            
+            // Qeydləri yenilə
+            if (newNotes.trim()) {
+                cellNotes[`${activeCell.row}-${activeCell.col}`] = newNotes;
+            } else {
+                delete cellNotes[`${activeCell.row}-${activeCell.col}`];
+            }
+
+            renderGrid();
+            closeModal();
+
+            // Uğurlu yadda saxlama animasiyası (optional - sadəcə konsola yazırıq hələlik)
+            console.log(`Xana [${activeCell.row},${activeCell.col}] yeniləndi.`);
+        }
+
+        // Modalın kənarına kliklədikdə bağlanması üçün
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModal')) {
+                closeModal();
+            }
+        });
+
+        // ESC düyməsi ilə bağlanma
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('editModal').classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // İlk render
+        renderGrid();
+    </script>
+</body>
+</html>
