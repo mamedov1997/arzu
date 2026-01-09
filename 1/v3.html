@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peşəkar Kassa Paneli</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --danger: #ff7675;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3799 0%, #6a11cb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 95%;
+            max-width: 700px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2d3436;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Yan-yana düzülüş */
+            gap: 20px;
+        }
+
+        .input-group {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .input-group:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #4b4b4b;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f1f2f6;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        .result-area {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #f1f2f6;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .total-val {
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--primary);
+            text-align: center;
+            display: block;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 5px;
+        }
+
+        button {
+            flex: 1;
+            border: none;
+            padding: 8px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .copy-btn { background: #f1f2f6; color: #2d3436; }
+        .copy-btn:hover { background: #dfe6e9; }
+        .copy-btn.copied { background: var(--success); color: white; }
+
+        .reset-btn { background: #fff5f5; color: var(--danger); }
+        .reset-btn:hover { background: #ffebeb; }
+
+        .red-label { color: #d63031 !important; }
+        .red-total { color: #d63031 !important; }
+
+        /* Mobil üçün alt-alta düzülüş */
+        @media (max-width: 500px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Satış və Qaytarma</h2>
+
+    <div class="grid-layout">
+        <div class="input-group">
+            <label>Sunmi (kart)</label>
+            <input type="number" id="input-kart" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'kart')">
+            <div class="result-area">
+                <span class="total-val" id="total-kart">0.00</span>
+                <div class="btn-container">
+                    <button class="copy-btn" id="btn-copy-kart" onclick="copyToClipboard('kart')">Kopyala</button>
+                    <button class="reset-btn" onclick="resetVal('kart')">Sıfırla</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Sunmi (nağd)</label>
+            <input type="number" id="input-nagd" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'nagd')">
+            <div class="result-area">
+                <span class="total-val" id="total-nagd">0.00</span>
+                <div class="btn-container">
+                    <button class="copy-btn" id="btn-copy-nagd" onclick="copyToClipboard('nagd')">Kopyala</button>
+                    <button class="reset-btn" onclick="resetVal('nagd')">Sıfırla</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="red-label">Nəğd qaytarma</label>
+            <input type="number" id="input-q-nagd" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'q-nagd')">
+            <div class="result-area">
+                <span class="total-val red-total" id="total-q-nagd">0.00</span>
+                <div class="btn-container">
+                    <button class="copy-btn" id="btn-copy-q-nagd" onclick="copyToClipboard('q-nagd')">Kopyala</button>
+                    <button class="reset-btn" onclick="resetVal('q-nagd')">Sıfırla</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="red-label">Kart qaytarma</label>
+            <input type="number" id="input-q-kart" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'q-kart')">
+            <div class="result-area">
+                <span class="total-val red-total" id="total-q-kart">0.00</span>
+                <div class="btn-container">
+                    <button class="copy-btn" id="btn-copy-q-kart" onclick="copyToClipboard('q-kart')">Kopyala</button>
+                    <button class="reset-btn" onclick="resetVal('q-kart')">Sıfırla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let totals = { 'kart': 0, 'nagd': 0, 'q-nagd': 0, 'q-kart': 0 };
+
+    function handleEnter(event, type) {
+        if (event.key === "Enter") {
+            let inputField = document.getElementById('input-' + type);
+            let val = parseFloat(inputField.value);
+            if (!isNaN(val)) {
+                totals[type] += val;
+                document.getElementById('total-' + type).innerText = totals[type].toFixed(2);
+                inputField.value = '';
+                // Kiçik effekt
+                let display = document.getElementById('total-' + type);
+                display.style.transform = "scale(1.1)";
+                setTimeout(() => display.style.transform = "scale(1)", 150);
+            }
+        }
+    }
+
+    function copyToClipboard(type) {
+        const val = totals[type].toFixed(2);
+        const btn = document.getElementById('btn-copy-' + type);
+        navigator.clipboard.writeText(val).then(() => {
+            btn.innerText = "OK!";
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerText = "Kopyala";
+                btn.classList.remove('copied');
+            }, 1000);
+        });
+    }
+
+    function resetVal(type) {
+        if(confirm("Sıfırlansın?")) {
+            totals[type] = 0;
+            document.getElementById('total-' + type).innerText = '0.00';
+            document.getElementById('input-' + type).value = '';
+        }
+    }
+</script>
+
+</body>
+</html>
