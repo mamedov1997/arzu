@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kassa Qalığ Hesablanması</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            font-family: 'Gilroy', 'Gilroy Medium', 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --danger: #ff7675;
+            --bg: #1e272e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e272e 0%, #485e74 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container & Grid Styles */
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 850px;
+            position: relative;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 20px;
+        }
+
+        .logo-box img { max-width: 150px; border-radius: 12px; }
+
+        h2 {
+            margin: 0;
+            color: #2d3436;
+            font-weight: 800;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .main-reset-btn {
+            background: var(--danger);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.3);
+            font-size: 13px;
+        }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .input-group {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 22px;
+            border: 1px solid #eef0f2;
+            transition: 0.3s;
+        }
+
+        label { display: flex; align-items: center; gap: 10px; font-weight: 700; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #f1f2f6;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            outline: none;
+            background: #fbfbfc;
+        }
+
+        .total-val { display: block; font-weight: 800; font-size: 32px; color: var(--primary); margin: 15px 0; text-align: center; }
+
+        .btn-container { display: flex; gap: 8px; }
+        .btn-container button { flex: 1; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+
+        .copy-btn { background: #6c5ce715; color: var(--primary); }
+        .reset-btn { background: #f1f2f6; color: #636e72; }
+        .red-text { color: var(--danger) !important; }
+
+        /* --- CUSTOM POPUP STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+
+        .modal-icon {
+            font-size: 50px;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+
+        .modal-title { font-size: 20px; font-weight: 800; color: #2d3436; margin-bottom: 10px; }
+        .modal-text { color: #636e72; font-size: 16px; margin-bottom: 25px; line-height: 1.5; }
+
+        .modal-btns { display: flex; gap: 12px; }
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-cancel { background: #f1f2f6; color: #2d3436; }
+        .btn-confirm { background: var(--danger); color: white; }
+        .btn-confirm:hover { background: #ff5252; }
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .header-section { flex-direction: column; align-items: center; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-section">
+        <div class="logo-box">
+            <img src="https://mamedov1997.github.io/arzu/1/logo.png" alt="Logo">
+        </div>
+        <button class="main-reset-btn" onclick="showPopup('all')">
+            <i class="fas fa-trash-alt"></i> Hamısını Sıfırla
+        </button>
+    </div>
+
+    <h2><i class="fas fa-calculator" style="color:var(--primary)"></i> Kassa Hesablanması</h2>
+
+    <div class="grid-layout">
+        <div class="input-group">
+            <label><i class="fas fa-credit-card" style="color:var(--primary)"></i> Sunmi (kart)</label>
+            <input type="number" id="input-kart" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'kart')">
+            <span class="total-val" id="total-kart">0.00</span>
+            <div class="btn-container">
+                <button class="copy-btn" id="btn-copy-kart" onclick="copyToClipboard('kart')"><i class="far fa-copy"></i> Kopyala</button>
+                <button class="reset-btn" onclick="showPopup('kart')">Sıfırla</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-money-bill-wave" style="color:var(--primary)"></i> Sunmi (nağd)</label>
+            <input type="number" id="input-nagd" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'nagd')">
+            <span class="total-val" id="total-nagd">0.00</span>
+            <div class="btn-container">
+                <button class="copy-btn" id="btn-copy-nagd" onclick="copyToClipboard('nagd')"><i class="far fa-copy"></i> Kopyala</button>
+                <button class="reset-btn" onclick="showPopup('nagd')">Sıfırla</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="red-text"><i class="fas fa-undo"></i> Nağd Qaytarma</label>
+            <input type="number" id="input-q-nagd" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'q-nagd')">
+            <span class="total-val red-text" id="total-q-nagd">0.00</span>
+            <div class="btn-container">
+                <button class="copy-btn" id="btn-copy-q-nagd" onclick="copyToClipboard('q-nagd')"><i class="far fa-copy"></i> Kopyala</button>
+                <button class="reset-btn" onclick="showPopup('q-nagd')">Sıfırla</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="red-text"><i class="fas fa-hand-holding-usd"></i> Kart Qaytarma</label>
+            <input type="number" id="input-q-kart" placeholder="Məbləğ + Enter" onkeypress="handleEnter(event, 'q-kart')">
+            <span class="total-val red-text" id="total-q-kart">0.00</span>
+            <div class="btn-container">
+                <button class="copy-btn" id="btn-copy-q-kart" onclick="copyToClipboard('q-kart')"><i class="far fa-copy"></i> Kopyala</button>
+                <button class="reset-btn" onclick="showPopup('q-kart')">Sıfırla</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <div class="modal-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="modal-title">Əminsiniz?</div>
+        <div class="modal-text" id="modalText">Məlumatlar silinəcək. Bu əməliyyat geri qaytarıla bilməz.</div>
+        <div class="modal-btns">
+            <button class="modal-btn btn-cancel" onclick="closePopup()">Ləğv et</button>
+            <button class="modal-btn btn-confirm" id="confirmAction">Bəli, sil</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let totals = { 'kart': 0, 'nagd': 0, 'q-nagd': 0, 'q-kart': 0 };
+    let currentResetType = null;
+
+    function handleEnter(event, type) {
+        if (event.key === "Enter") {
+            let inputField = document.getElementById('input-' + type);
+            let val = parseFloat(inputField.value);
+            if (!isNaN(val)) {
+                totals[type] += val;
+                document.getElementById('total-' + type).innerText = totals[type].toFixed(2);
+                inputField.value = '';
+                
+                let display = document.getElementById('total-' + type);
+                display.style.transform = "scale(1.2)";
+                setTimeout(() => display.style.transform = "scale(1)", 150);
+            }
+        }
+    }
+
+    function copyToClipboard(type) {
+        const val = totals[type].toFixed(2);
+        const btn = document.getElementById('btn-copy-' + type);
+        navigator.clipboard.writeText(val).then(() => {
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = "<i class='fas fa-check'></i>";
+            btn.style.background = "#00b894";
+            btn.style.color = "white";
+            setTimeout(() => {
+                btn.innerHTML = oldHtml;
+                btn.style.background = "";
+                btn.style.color = "";
+            }, 1000);
+        });
+    }
+
+    // POPUP FUNCTIONS
+    function showPopup(type) {
+        currentResetType = type;
+        const modal = document.getElementById('modalOverlay');
+        const text = document.getElementById('modalText');
+        
+        if(type === 'all') {
+            text.innerText = "BÜTÜN kassa məlumatlarını sıfırlamaq istəyirsiniz?";
+        } else {
+            text.innerText = "Bu bölmənin məlumatlarını sıfırlamaq istəyirsiniz?";
+        }
+        
+        modal.classList.add('active');
+    }
+
+    function closePopup() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        currentResetType = null;
+    }
+
+    document.getElementById('confirmAction').addEventListener('click', () => {
+        if(currentResetType === 'all') {
+            for (let type in totals) {
+                totals[type] = 0;
+                document.getElementById('total-' + type).innerText = '0.00';
+                document.getElementById('input-' + type).value = '';
+            }
+        } else {
+            totals[currentResetType] = 0;
+            document.getElementById('total-' + currentResetType).innerText = '0.00';
+            document.getElementById('input-' + currentResetType).value = '';
+        }
+        closePopup();
+    });
+
+    // Close on overlay click
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+        if(e.target.id === 'modalOverlay') closePopup();
+    });
+</script>
+
+</body>
+</html>
