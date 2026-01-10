@@ -19,7 +19,34 @@
             padding: 0;
             background-color: var(--light-gray);
         }
+<script>
+        document.querySelector('.search-container input').addEventListener('input', function(e) {
+            // Daxil edilən mətni kiçik hərflərə çeviririk ki, axtarış həssas olsun
+            let searchTerm = e.target.value.toLowerCase();
+            
+            // Bütün mağaza kartlarını seçirik
+            let cards = document.querySelectorAll('.store-card');
+            
+            cards.forEach(card => {
+                // Kartın daxilindəki mağaza adını və kodunu götürürük
+                let storeName = card.querySelector('.store-name').innerText.toLowerCase();
+                let storeCode = card.querySelector('.store-code').innerText.toLowerCase();
+                
+                // Əgər axtarılan söz adın və ya kodun daxilində varsa göstər, yoxdursa gizlə
+                if (storeName.includes(searchTerm) || storeCode.includes(searchTerm)) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
 
+        // Axtarış sahəsini aktivləşdirmək üçün böyüdücü ikonuna kliklədikdə fokuslanma
+        document.querySelector('.search-container i').addEventListener('click', function() {
+            document.querySelector('.search-container input').focus();
+        });
+    </script>
+            
         header {
             background-color: #fff;
             padding: 15px 5%;
