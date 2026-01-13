@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hədiyyə Kartları Sistemi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #d90429;
+            --dark-gray: #2b2d42;
+            --soft-gray: #8d99ae;
+            --light-bg: #edf2f4;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: #ffffff;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .logo img {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        /* Menyu Naviqasiyası */
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            position: relative;
+        }
+
+        /* Dropdown Konteyner */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark-gray);
+            font-weight: 600;
+            padding-bottom: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-item i {
+            color: var(--primary-red);
+        }
+
+        /* Açılan Menyu (Dropdown Content) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #ffffff;
+            min-width: 220px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            border-top: 3px solid var(--primary-red);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-content a {
+            color: var(--dark-gray);
+            padding: 12px 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: 0.2s;
+        }
+
+        .dropdown-content a i {
+            font-size: 12px;
+            color: var(--soft-gray);
+        }
+
+        .dropdown-content a:hover {
+            background-color: #fff5f5;
+            color: var(--primary-red);
+            padding-left: 25px;
+        }
+
+        .dropdown-content a:hover i {
+            color: var(--primary-red);
+        }
+
+        /* Axtarış Paneli */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            width: 220px;
+            transition: 0.4s;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--soft-gray);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-red);
+            width: 280px;
+            box-shadow: 0 0 15px rgba(217, 4, 41, 0.15);
+        }
+
+        .hero-text {
+            padding: 80px 6%;
+            color: var(--dark-gray);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-container">
+            <div class="logo">
+                <a href="#">
+                    <img src="https://via.placeholder.com/180x60/d90429/ffffff?text=LOGO+BURADA" alt="Logo">
+                </a>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="dropdown">
+                    <div class="nav-item">
+                        <i class="fa-solid fa-gift"></i>
+                        <span>Hədiyyə kartları</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10007124</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009662</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009303</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009209</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009713</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10010687</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009710</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10012299</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10009531</a>
+                        <a href="#"><i class="fa-solid fa-ticket"></i> 10011146</a>
+                    </div>
+                </div>
+
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Balans yoxla</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Kod və ya ad axtar...">
+        </div>
+    </header>
+
+    <main class="hero-text">
+        <h2>Sistem Hazırdır</h2>
+        <p>"Hədiyyə kartları" menyusunun üzərinə gələrək siyahını görə bilərsiniz.</p>
+    </main>
+
+</body>
+</html>
