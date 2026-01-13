@@ -4,6 +4,19 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
+// Yeni: Kartın bazada olub-olmadığını yoxlayan funksiya
+function checkCardExists(cardNo) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Sheet1");
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0].toString() == cardNo) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function findCard(cardNo) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Sheet1");
@@ -59,7 +72,13 @@ function updateBalance(info) {
 
   mainSheet.getRange(info.row, 2).setValue(info.newBalance);
   logSheet.appendRow([new Date(), info.cardNo, info.amount, info.invoiceNo, info.cashier, info.customerCode, info.note]);
-  return "Əməliyyat uğurla tamamlandı!";
+  
+  // Əgər məbləğ mənfidirsə, bu bərpa deməkdir
+  if (info.amount < 0) {
+    return "Məbləğ uğurla bərpa olundu!";
+  } else {
+    return "Ödəniş uğurla tamamlandı!";
+  }
 }
 
 function registerNewCard(info) {
@@ -67,14 +86,20 @@ function registerNewCard(info) {
   var mainSheet = ss.getSheetByName("Sheet1");
   var logSheet = ss.getSheetByName("Logs");
   
+  // Backend-də təhlükəsizlik yoxlaması: Kart artıq varmı?
+  var data = mainSheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0].toString() == info.cardNo) {
+      throw new Error("Bu kart kodu artıq sistemdə mövcuddur!");
+    }
+  }
+
   var initialBalance = info.nominal - info.usedAmount;
-  
-  // YENİ SATIŞ ÜÇÜN YOXLAMA:
   if (initialBalance < 0) {
     throw new Error("Xəta: İlkin istifadə nominaldan çox ola bilməz!");
   }
 
   mainSheet.appendRow([info.cardNo, initialBalance, info.customerCode, info.nominal]);
   logSheet.appendRow([new Date(), info.cardNo, info.usedAmount, info.invoiceNo, info.cashier, info.customerCode, info.note || "YENİ SATIŞ"]);
-  return "Yeni kart aktivləşdirildi!";
+  return "Yeni kart uğurla aktivləşdirildi!";
 }
