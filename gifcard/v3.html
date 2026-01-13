@@ -11,104 +11,122 @@
             --dark-gray: #343a40;
             --light-bg: #f4f7f6;
             --white: #ffffff;
+            --border-color: #dee2e6;
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--light-bg);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
-        /* Logo Sahəsi */
-        header {
-            padding: 25px 50px;
-        }
+        header { padding: 25px 50px; }
+        .logo img { max-height: 40px; }
 
-        .logo img {
-            max-height: 40px;
-            object-fit: contain;
-        }
-
-        /* Əsas Konteynerr */
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 80px; /* Yuxarıdan olan məsafə */
+            padding-top: 60px;
         }
 
-        .section-title {
-            color: var(--dark-gray);
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 30px;
-            letter-spacing: 0.5px;
-            opacity: 0.8;
-        }
-
-        /* Menyu Qrupu */
         .menu-grid {
             display: flex;
             gap: 20px;
+            margin-bottom: 30px;
         }
 
-        /* Kiçildilmiş və Səliqəli Kartlar */
         .menu-item {
             background: var(--white);
             text-decoration: none;
-            width: 180px; /* Daha yığcam en */
-            padding: 25px 15px;
-            border-radius: 15px;
+            width: 160px;
+            padding: 20px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid transparent;
+            cursor: pointer;
         }
 
         .menu-item i {
-            font-size: 28px; /* Daha kiçik ikonlar */
+            font-size: 24px;
             color: var(--primary-red);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .menu-item span {
-            font-size: 14px; /* Daha zərif yazı */
+            font-size: 14px;
             font-weight: 600;
             color: var(--dark-gray);
-            text-align: center;
         }
 
-        /* Hover (Üzərinə gəldikdə) */
-        .menu-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .menu-item:hover, .menu-item.active {
             border-color: var(--primary-red);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
 
-        .menu-item:active {
-            transform: scale(0.95);
+        /* Axtarış Sahəsi Dizaynı */
+        #search-container {
+            display: none; /* İlkin olaraq gizli */
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 360px;
+            animation: fadeIn 0.4s ease;
         }
 
-        /* Mobil üçün */
-        @media (max-width: 450px) {
-            .menu-grid {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .menu-item {
-                width: 220px;
-                flex-direction: row;
-                padding: 15px 20px;
-                justify-content: flex-start;
-            }
-            .menu-item i {
-                margin-bottom: 0;
-                margin-right: 15px;
-                font-size: 22px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-box {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 2px rgba(208, 0, 0, 0.1);
+        }
+
+        .search-box input {
+            border: none;
+            padding: 12px 15px;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .search-box button {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #a00000;
+        }
+
+        .search-label {
+            display: block;
+            font-size: 13px;
+            color: var(--dark-gray);
+            margin-bottom: 8px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -121,20 +139,39 @@
     </header>
 
     <div class="container">
-        <h2 class="section-title">Zəhmət olmasa seçim edin</h2>
-        
         <div class="menu-grid">
-            <a href="#" class="menu-item">
+            <div class="menu-item" onclick="toggleSearch()">
                 <i class="fas fa-search-dollar"></i>
                 <span>Balansı yoxla</span>
-            </a>
+            </div>
 
-            <a href="#" class="menu-item">
+            <div class="menu-item">
                 <i class="fas fa-pen-fancy"></i>
                 <span>Balansa düzəliş</span>
-            </a>
+            </div>
+        </div>
+
+        <div id="search-container">
+            <label class="search-label">Kart nömrəsini daxil edin:</label>
+            <div class="search-box">
+                <input type="text" placeholder="0000 0000 0000 0000">
+                <button title="Axtar">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </div>
     </div>
+
+    <script>
+        function toggleSearch() {
+            var container = document.getElementById("search-container");
+            if (container.style.display === "block") {
+                container.style.display = "none";
+            } else {
+                container.style.display = "block";
+            }
+        }
+    </script>
 
 </body>
 </html>
