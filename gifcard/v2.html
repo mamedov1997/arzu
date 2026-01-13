@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart Sistemi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #d90429;
+            --dark-gray: #2b2d42;
+            --bg-light: #edf2f4;
+            --white: #ffffff;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-light);
+        }
+
+        /* Header / Logo */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .logo img {
+            max-height: 45px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        /* Mərkəzləşdirilmiş Menyu Sahəsi */
+        .wrapper {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .menu-title {
+            color: var(--dark-gray);
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .menu-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Kartların Dizaynı */
+        .menu-card {
+            background: var(--white);
+            text-decoration: none;
+            color: var(--dark-gray);
+            width: 280px;
+            padding: 40px 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .menu-card i {
+            font-size: 50px;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+        }
+
+        .menu-card span {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Hover Effekti */
+        .menu-card:hover {
+            transform: translateY(-15px);
+            background-color: var(--primary-red);
+            color: var(--white);
+            box-shadow: 0 15px 40px rgba(217, 4, 41, 0.3);
+        }
+
+        .menu-card:hover i {
+            color: var(--white);
+        }
+
+        /* Mobil Adaptasiya */
+        @media (max-width: 650px) {
+            .menu-grid {
+                flex-direction: column;
+            }
+            .menu-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="#">
+                <img src="https://via.placeholder.com/180x60/d90429/ffffff?text=LOGO" alt="Logo">
+            </a>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="menu-title">Əməliyyat Seçin</div>
+        
+        <div class="menu-grid">
+            <a href="#" class="menu-card">
+                <i class="fas fa-search-dollar"></i>
+                <span>Kartın balansını yoxla</span>
+            </a>
+
+            <a href="#" class="menu-card">
+                <i class="fas fa-sliders-h"></i>
+                <span>Balansa düzəliş et</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
