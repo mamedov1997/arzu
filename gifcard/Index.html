@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'Gilroy';
+            src: url('https://mamedov1997.github.io/arzu/gifcard/Gilroy-Medium.otf') format('opentype');
+            font-weight: 500; font-style: normal;
+        }
+
+        :root { 
+            --primary-red: #d00000; --dark-gray: #2d3436; --light-bg: #f5f6fa; 
+            --white: #ffffff; --border: #edeff2; --main-font: 'Gilroy', sans-serif;
+            --overlay: rgba(0, 0, 0, 0.4); --success: #2ecc71; --error: #e74c3c;
+        }
+
+        body { margin: 0; padding: 0; background-color: var(--light-bg); font-family: var(--main-font); color: var(--dark-gray); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo-img { height: 45px; }
+        .header-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+        .main-container { display: flex; padding: 40px; gap: 50px; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
+        .action-side { flex: 1.6; }
+        .visual-side { flex: 1; display: flex; flex-direction: column; align-items: flex-end; position: sticky; top: 40px; perspective: 1000px; }
+
+        .menu-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab { flex: 1; height: 55px; background: white; cursor: pointer; font-weight: 600; font-size: 14px; color: #636e72; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .tab.active { background: var(--primary-red); color: white; transform: translateY(-2px); }
+        .tab-new.active { background: #000; }
+
+        .panel-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.04); display: none; animation: fadeIn 0.4s ease; }
+        .panel-card.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .gift-card { 
+            width: 380px; height: 230px; border-radius: 25px; color: white; padding: 35px; 
+            box-sizing: border-box; box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+            position: relative; overflow: hidden;
+            animation: cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transition: background 0.5s ease;
+        }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: scale(0.8) rotateY(-30deg) translateY(50px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) rotateY(0deg) translateY(0); }
+        }
+        .gift-card::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: rotate(45deg); animation: shine 4s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
+
+        .card-chip { width: 52px; height: 40px; background: linear-gradient(135deg, #f1c40f 0%, #d4af37 100%); border-radius: 8px; margin-bottom: 25px; }
+        .card-number { font-size: 20px; letter-spacing: 3px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+        .card-balance-val { font-size: 38px; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+        .card-nominal-val { font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.2); padding: 6px 15px; border-radius: 12px; position: absolute; bottom: 35px; right: 35px; border: 1px solid rgba(255,255,255,0.2); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; color: #95a5a6; margin-bottom: 8px; text-transform: uppercase; }
+        .req::after { content: " *"; color: var(--error); }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 18px; color: #b2bec3; font-size: 16px; }
+        input { width: 100%; padding: 0 15px 0 48px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; height: 54px; box-sizing: border-box; outline: none; transition: 0.3s; background: #fcfcfc; }
+        input:focus { border-color: var(--primary-red); background: white; }
+
+        .btn { width: 100%; height: 54px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 14px; }
+        .btn-main { background: var(--dark-gray); color: white; }
+        .btn-save { background: var(--primary-red); color: white; }
+        .btn-new { background: var(--success); color: white; }
+
+        .modern-loader { display: none; justify-content: center; gap: 8px; padding: 20px 0; }
+        .modern-loader div { width: 12px; height: 12px; background: var(--primary-red); border-radius: 50%; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1.2); opacity: 1; } }
+
+        .history-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .history-table th { text-align: left; padding: 12px; background: #f8f9fa; color: #95a5a6; }
+        .history-table td { padding: 15px 12px; border-bottom: 1px solid #f1f2f6; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: var(--overlay); backdrop-filter: blur(8px); z-index: 9999; }
+        .modal-card { background: white; width: 350px; margin: 120px auto; padding: 40px; border-radius: 30px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container"><img src="https://mamedov1997.github.io/arzu/1/logo.png" class="logo-img"></div>
+    <div class="header-title">Hədiyyə kartı sistemi</div>
+</header>
+
+<div class="main-container">
+    <div class="action-side">
+        <div class="menu-tabs">
+            <div id="tab-check" class="tab active" onclick="switchTab('check')"><i class="fas fa-search-dollar"></i> Yoxla</div>
+            <div id="tab-edit" class="tab" onclick="switchTab('edit')"><i class="fas fa-exchange-alt"></i> Düzəliş</div>
+            <div id="tab-new" class="tab tab-new" onclick="switchTab('new')"><i class="fas fa-plus-circle"></i> Yeni Satış</div>
+        </div>
+
+        <div class="panel-container">
+            <div id="panel-check" class="panel-card active">
+                <div class="input-group">
+                    <label class="req">Kartın Kodu</label>
+                    <div class="input-wrapper"><input type="text" id="checkCardNo" placeholder="Skan edin..."><i class="fas fa-barcode"></i></div>
+                </div>
+                <button id="checkBtn" class="btn btn-main" onclick="handleSearch('check')">Yoxla</button>
+                <div id="check-loader" class="modern-loader"><div></div><div></div><div></div></div>
+                <div id="history-area" style="display:none; margin-top:30px;"><div id="history-content"></div></div>
+            </div>
+
+            <div id="panel-edit" class="panel-card">
+                <div class="input-group">
+                    <label class="req">Kartın Kodu</label>
+                    <div class="input-wrapper"><input type="text" id="editCardNo" placeholder="Kod daxil edin..."><i class="fas fa-search"></i></div>
+                </div>
+                <button id="findBtn" class="btn btn-main" onclick="handleSearch('edit')">Kartı Tap</button>
+                <div id="edit-loader" class="modern-loader"><div></div><div></div><div></div></div>
+                <div id="form-section" style="display:none; margin-top:20px;">
+                    <div class="input-group"><label class="req">Silinəcək/Bərpa Məbləği (- işarəsi ilə artır)</label><div class="input-wrapper"><input type="number" step="0.01" id="adjAmount"><i class="fas fa-money-bill-wave"></i></div></div>
+                    <div class="input-row" style="display:flex; gap:15px;">
+                        <div class="input-group" style="flex:1;"><label class="req">Faktura №</label><div class="input-wrapper"><input type="text" id="invNo"><i class="fas fa-file-invoice"></i></div></div>
+                        <div class="input-group" style="flex:1;"><label>Müştəri Kodu</label><div class="input-wrapper"><input type="text" id="custCode"><i class="fas fa-user-tag"></i></div></div>
+                    </div>
+                    <div class="input-group"><label class="req">Kassir</label><div class="input-wrapper"><input type="text" id="cashier"><i class="fas fa-user-shield"></i></div></div>
+                    <div class="input-group"><label>Qeyd</label><div class="input-wrapper"><input type="text" id="opNote"><i class="fas fa-sticky-note"></i></div></div>
+                    <button id="saveBtn" class="btn btn-save" onclick="handleSave()">Yadda Saxla</button>
+                    <div id="save-loader" class="modern-loader"><div></div><div></div><div></div></div>
+                </div>
+            </div>
+
+            <div id="panel-new" class="panel-card">
+                <h4 style="color:var(--success); margin-bottom:20px;">KARTIN QEYDİYYATI</h4>
+                <div class="input-group"><label class="req">Yeni Kart Kodu</label><div class="input-wrapper"><input type="text" id="newCardNo" oninput="updatePreview()"><i class="fas fa-barcode"></i></div></div>
+                <div class="input-row" style="display:flex; gap:15px;">
+                    <div class="input-group" style="flex:1;"><label class="req">Nominal (AZN)</label><div class="input-wrapper"><input type="number" id="newNominal" oninput="updatePreview()"><i class="fas fa-gem"></i></div></div>
+                    <div class="input-group" style="flex:1;"><label class="req">İstifadə</label><div class="input-wrapper"><input type="number" id="newUsedAmount" value="0" oninput="updatePreview()"><i class="fas fa-hand-holding-usd"></i></div></div>
+                </div>
+                <div class="input-row" style="display:flex; gap:15px;">
+                    <div class="input-group" style="flex:1;"><label class="req">Faktura №</label><div class="input-wrapper"><input type="text" id="newInvNo"><i class="fas fa-file-invoice"></i></div></div>
+                    <div class="input-group" style="flex:1;"><label>Müştəri Kodu</label><div class="input-wrapper"><input type="text" id="newCustCode"><i class="fas fa-id-card"></i></div></div>
+                </div>
+                <div class="input-group"><label class="req">Kassir</label><div class="input-wrapper"><input type="text" id="newCashier"><i class="fas fa-user-check"></i></div></div>
+                <div class="input-group"><label>Qeyd</label><div class="input-wrapper"><input type="text" id="newNote"><i class="fas fa-comment-dots"></i></div></div>
+                <button id="newBtn" class="btn btn-new" onclick="handleNewSale()">Aktivləşdir</button>
+                <div id="new-loader" class="modern-loader"><div></div><div></div><div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="visual-side">
+        <div id="card-placeholder" style="text-align:center; padding-top:100px; color:#ccc;"><i class="fas fa-credit-card" style="font-size:70px; opacity:0.1;"></i><p style="font-size:13px; margin-top:15px;">Gözlənilir...</p></div>
+        <div id="card-output"></div>
+    </div>
+</div>
+
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card">
+        <div id="modalIcon" style="font-size:50px; margin-bottom:20px;"></div>
+        <h3 id="modalTitle"></h3>
+        <p id="modalMsg"></p>
+        <button class="btn btn-main" onclick="closeModal()">Bağla</button>
+    </div>
+</div>
+
+<script>
+    let currentCardData = {};
+
+    function getCardColor(nom) {
+        nom = Number(nom);
+        if (nom <= 50) return "#1b4d3e"; 
+        if (nom <= 100) return "#d00000"; 
+        if (nom <= 300) return "#e67e22"; 
+        if (nom <= 500) return "#000080"; 
+        return "#1a1a1a"; 
+    }
+
+    function updatePreview() {
+        const cardNo = document.getElementById('newCardNo').value || "Skan Edilməyib";
+        const nominal = Number(document.getElementById('newNominal').value) || 0;
+        const used = Number(document.getElementById('newUsedAmount').value) || 0;
+        if (nominal > 0 || cardNo !== "Skan Edilməyib") {
+            drawCard(cardNo, nominal - used, nominal);
+        } else {
+            document.getElementById('card-output').innerHTML = '';
+            document.getElementById('card-placeholder').style.display = 'block';
+        }
+    }
+
+    function drawCard(no, bal, nom) {
+        const out = document.getElementById('card-output');
+        document.getElementById('card-placeholder').style.display = 'none';
+        const color = getCardColor(nom);
+        
+        const existing = document.querySelector('.gift-card');
+        if (!existing) {
+            out.innerHTML = `
+                <div class="gift-card" style="background: ${color}">
+                    <div class="card-chip"></div>
+                    <div class="card-number" id="v-no">${no}</div>
+                    <div class="card-balance-val" id="v-bal">${bal} AZN</div>
+                    <div class="card-nominal-val" id="v-nom">${nom} AZN</div>
+                </div>`;
+        } else {
+            existing.style.background = color;
+            document.getElementById('v-no').innerText = no;
+            document.getElementById('v-bal').innerText = bal + " AZN";
+            document.getElementById('v-nom').innerText = nom + " AZN";
+        }
+    }
+
+    function switchTab(mode) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel-card').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + mode).classList.add('active');
+        document.getElementById('panel-' + mode).classList.add('active');
+        resetView();
+    }
+
+    function resetView() {
+        document.getElementById('card-output').innerHTML = '';
+        document.getElementById('card-placeholder').style.display = 'block';
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('history-area').style.display = 'none';
+        document.querySelectorAll('input').forEach(i => i.value = i.id === 'newUsedAmount' ? "0" : "");
+        document.querySelectorAll('.modern-loader').forEach(l => l.style.display = 'none');
+        document.querySelectorAll('.btn').forEach(b => b.style.display = 'block');
+    }
+
+    function handleSearch(type) {
+        const id = type === 'check' ? 'checkCardNo' : 'editCardNo';
+        const btnId = type === 'check' ? 'checkBtn' : 'findBtn';
+        const loaderId = type + '-loader';
+        const val = document.getElementById(id).value;
+        if(!val) return;
+        
+        document.getElementById(btnId).style.display = 'none';
+        document.getElementById(loaderId).style.display = 'flex';
+        
+        google.script.run.withSuccessHandler(results => {
+            document.getElementById(btnId).style.display = 'block';
+            document.getElementById(loaderId).style.display = 'none';
+            if(results.length > 0) {
+                const card = results[0];
+                currentCardData = card;
+                drawCard(card.cardNo, card.balance, card.nominal);
+                if(type === 'check') {
+                    let html = '<table class="history-table"><tr><th>Tarix</th><th>Məbləğ</th><th>Kassir</th><th>Qeyd</th></tr>';
+                    card.history.forEach(h => html += `<tr><td>${h.date}</td><td>${h.amount} AZN</td><td>${h.cashier}</td><td>${h.note}</td></tr>`);
+                    document.getElementById('history-content').innerHTML = html + '</table>';
+                    document.getElementById('history-area').style.display = 'block';
+                } else {
+                    document.getElementById('form-section').style.display = 'block';
+                }
+            } else showModal("Xəta", "Kart tapılmadı.", false);
+        }).findCard(val);
+    }
+
+    function handleSave() {
+        const amountToProcess = Number(document.getElementById('adjAmount').value);
+        if(isNaN(amountToProcess) || amountToProcess === 0) {
+            showModal("Xəta", "Zəhmət olmasa düzgün məbləğ daxil edin.", false);
+            return;
+        }
+
+        const newCalculatedBalance = currentCardData.balance - amountToProcess;
+
+        if (newCalculatedBalance > currentCardData.nominal) {
+            showModal("Xəta", "Bərpa edilən məbləğ nominaldan çox ola bilməz!", false);
+            return;
+        }
+
+        if (newCalculatedBalance < 0) {
+            showModal("Xəta", "Balans kifayət deyil!", false);
+            return;
+        }
+
+        document.getElementById('saveBtn').style.display = 'none';
+        document.getElementById('save-loader').style.display = 'flex';
+
+        google.script.run
+            .withSuccessHandler(msg => {
+                document.getElementById('saveBtn').style.display = 'block';
+                document.getElementById('save-loader').style.display = 'none';
+                showModal("Uğurlu", msg, true);
+                resetView();
+            })
+            .withFailureHandler(err => {
+                document.getElementById('saveBtn').style.display = 'block';
+                document.getElementById('save-loader').style.display = 'none';
+                showModal("Xəta", err.message, false);
+            })
+            .updateBalance({
+                row: currentCardData.row, 
+                cardNo: currentCardData.cardNo, 
+                amount: amountToProcess,
+                nominal: currentCardData.nominal,
+                newBalance: newCalculatedBalance, 
+                invoiceNo: document.getElementById('invNo').value,
+                cashier: document.getElementById('cashier').value, 
+                customerCode: document.getElementById('custCode').value,
+                note: document.getElementById('opNote').value
+            });
+    }
+
+    function handleNewSale() {
+        const info = {
+            cardNo: document.getElementById('newCardNo').value,
+            nominal: Number(document.getElementById('newNominal').value),
+            usedAmount: Number(document.getElementById('newUsedAmount').value),
+            invoiceNo: document.getElementById('newInvNo').value,
+            customerCode: document.getElementById('newCustCode').value,
+            cashier: document.getElementById('newCashier').value,
+            note: document.getElementById('newNote').value
+        };
+
+        if(!info.cardNo || !info.nominal) {
+            showModal("Xəta", "Kart kodu və Nominal mütləqdir!", false);
+            return;
+        }
+
+        // YENİ SATIŞ ÜÇÜN YOXLAMA:
+        if (info.usedAmount > info.nominal) {
+            showModal("Xəta", "İlkin istifadə nominaldan (" + info.nominal + " AZN) çox ola bilməz!", false);
+            return;
+        }
+
+        document.getElementById('newBtn').style.display = 'none';
+        document.getElementById('new-loader').style.display = 'flex';
+
+        google.script.run
+            .withSuccessHandler(msg => {
+                document.getElementById('newBtn').style.display = 'block';
+                document.getElementById('new-loader').style.display = 'none';
+                showModal("Uğurlu", msg, true);
+                resetView();
+            })
+            .withFailureHandler(err => {
+                document.getElementById('newBtn').style.display = 'block';
+                document.getElementById('new-loader').style.display = 'none';
+                showModal("Xəta", err.message, false);
+            })
+            .registerNewCard(info);
+    }
+
+    function showModal(t, m, s) {
+        document.getElementById('modalTitle').innerText = t;
+        document.getElementById('modalMsg').innerText = m;
+        document.getElementById('modalIcon').innerHTML = s ? '<i class="fas fa-check-circle" style="color:#2ecc71;"></i>' : '<i class="fas fa-exclamation-circle" style="color:#e74c3c;"></i>';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+</script>
+</body>
+</html>
