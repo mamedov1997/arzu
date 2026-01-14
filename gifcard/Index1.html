@@ -230,7 +230,7 @@
         const id = type === 'check' ? 'checkCardNo' : 'editCardNo';
         const btnId = type === 'check' ? 'checkBtn' : 'findBtn';
         const loaderId = type + '-loader';
-        const val = document.getElementById(id).value;
+        const val = document.getElementById(id).value.trim();
         if(!val) return;
         
         document.getElementById(btnId).style.display = 'none';
@@ -257,8 +257,16 @@
 
     function handleSave() {
         const amountToProcess = Number(document.getElementById('adjAmount').value);
+        const invNo = document.getElementById('invNo').value.trim();
+        const cashier = document.getElementById('cashier').value.trim();
+
+        // Mütləq sahələr yoxlanılır
         if(isNaN(amountToProcess) || amountToProcess === 0) {
             showModal("Xəta", "Zəhmət olmasa düzgün məbləğ daxil edin.", false);
+            return;
+        }
+        if(!invNo || !cashier) {
+            showModal("Xəta", "Faktura № və Kassir mütləq doldurulmalıdır!", false);
             return;
         }
 
@@ -295,8 +303,8 @@
                 amount: amountToProcess,
                 nominal: currentCardData.nominal,
                 newBalance: newCalculatedBalance, 
-                invoiceNo: document.getElementById('invNo').value,
-                cashier: document.getElementById('cashier').value, 
+                invoiceNo: invNo,
+                cashier: cashier, 
                 customerCode: document.getElementById('custCode').value,
                 note: document.getElementById('opNote').value
             });
@@ -304,21 +312,22 @@
 
     function handleNewSale() {
         const info = {
-            cardNo: document.getElementById('newCardNo').value,
+            cardNo: document.getElementById('newCardNo').value.trim(),
             nominal: Number(document.getElementById('newNominal').value),
             usedAmount: Number(document.getElementById('newUsedAmount').value),
-            invoiceNo: document.getElementById('newInvNo').value,
-            customerCode: document.getElementById('newCustCode').value,
-            cashier: document.getElementById('newCashier').value,
-            note: document.getElementById('newNote').value
+            invoiceNo: document.getElementById('newInvNo').value.trim(),
+            customerCode: document.getElementById('newCustCode').value.trim(),
+            cashier: document.getElementById('newCashier').value.trim(),
+            note: document.getElementById('newNote').value.trim()
         };
 
-        if(!info.cardNo || !info.nominal) {
-            showModal("Xəta", "Kart kodu və Nominal mütləqdir!", false);
-            return;
-        }
+        // Yeni Satış üçün mütləq sahələrin yoxlanılması
+        if(!info.cardNo) { showModal("Xəta", "Kart kodu daxil edilməlidir!", false); return; }
+        if(!info.nominal || info.nominal <= 0) { showModal("Xəta", "Nominal mütləq qeyd edilməlidir!", false); return; }
+        if(isNaN(info.usedAmount)) { showModal("Xəta", "İstifadə məbləği düzgün daxil edilməyib!", false); return; }
+        if(!info.invoiceNo) { showModal("Xəta", "Faktura № mütləq doldurulmalıdır!", false); return; }
+        if(!info.cashier) { showModal("Xəta", "Kassir adı mütləq doldurulmalıdır!", false); return; }
 
-        // YENİ SATIŞ ÜÇÜN YOXLAMA:
         if (info.usedAmount > info.nominal) {
             showModal("Xəta", "İlkin istifadə nominaldan (" + info.nominal + " AZN) çox ola bilməz!", false);
             return;
@@ -327,19 +336,29 @@
         document.getElementById('newBtn').style.display = 'none';
         document.getElementById('new-loader').style.display = 'flex';
 
-        google.script.run
-            .withSuccessHandler(msg => {
+        // Kartın sistemdə olub-olmadığını əvvəlcədən yoxlayırıq
+        google.script.run.withSuccessHandler(exists => {
+            if (exists) {
                 document.getElementById('newBtn').style.display = 'block';
                 document.getElementById('new-loader').style.display = 'none';
-                showModal("Uğurlu", msg, true);
-                resetView();
-            })
-            .withFailureHandler(err => {
-                document.getElementById('newBtn').style.display = 'block';
-                document.getElementById('new-loader').style.display = 'none';
-                showModal("Xəta", err.message, false);
-            })
-            .registerNewCard(info);
+                showModal("Xəta", "Bu kart kodu artıq sistemdə mövcuddur!", false);
+            } else {
+                // Əgər kart yoxdursa, qeydiyyata davam edirik
+                google.script.run
+                    .withSuccessHandler(msg => {
+                        document.getElementById('newBtn').style.display = 'block';
+                        document.getElementById('new-loader').style.display = 'none';
+                        showModal("Uğurlu", msg, true);
+                        resetView();
+                    })
+                    .withFailureHandler(err => {
+                        document.getElementById('newBtn').style.display = 'block';
+                        document.getElementById('new-loader').style.display = 'none';
+                        showModal("Xəta", err.message, false);
+                    })
+                    .registerNewCard(info);
+            }
+        }).checkCardExists(info.cardNo);
     }
 
     function showModal(t, m, s) {
